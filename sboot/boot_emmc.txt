@@ -1,0 +1,6 @@
+tftp 0x20400000 ./out/rom_emmc_boot.bin
+#tftp 0x20402800 sboot.bin
+tftp 0x20500000 ./out/mboot.bin
+
+mmc write.boot 1 0x20400000 0 0x12800
+mmc write 0x20500000 0x1000 0x200000

@@ -1,0 +1,9 @@
+CFLAGS += -I$(srctree)/inc/amethyst/board -I$(srctree)/src -I$(srctree)/src/amethyst/include
+AFLAGS += -I$(srctree)/inc/amethyst/board -I$(srctree)/src -I$(srctree)/src/amethyst/include
+
+extra-y += sboot.lds
+lib-y += boot.o bootram.o
+lib-y += bootrom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu.o bootrom_data.o
+lib-y += drvPadConf.o
+lib-y += apiBDMA.o
+

@@ -1,0 +1,28 @@
+CFLAGS += -I$(srctree)/inc/maria10/pm/board -I$(srctree)/src
+#AFLAGS += -I$(srctree)/inc/maria10/pm/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_MARIA10_PM) 		+= sboot.lds
+
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= reset.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= cache.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= context.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= backtrace.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= exception.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= interrupt.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= risc32.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= stack.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= vectors.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= init_maria10.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= drvGlobal.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= puts.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= printf.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= drvAeonUART.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= vsnprintf.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= snprintf.o
+#lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= sprintf.o
+#lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= device.o
+#lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= putchar.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= setSPI.o
+lib-$(CONFIG_MSTAR_MARIA10_PM) 		+= MApp_IR.o

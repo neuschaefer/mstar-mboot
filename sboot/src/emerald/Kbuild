@@ -1,0 +1,14 @@
+CFLAGS += -I$(srctree)/inc/emerald/board -I$(srctree)/src -I$(srctree)/src/emerald/include
+AFLAGS += -I$(srctree)/inc/emerald/board -I$(srctree)/src -I$(srctree)/src/emerald/include
+
+extra-y += sboot.lds
+lib-y += boot.o bootram.o
+
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_NAND_FLASH),y)
+    lib-y += bootram_rom.o bootrom_rom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu0.o bootrom_data.o bootrom_miu1.o  cache.o
+else
+    lib-y += bootrom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu0.o bootrom_miu1.o bootrom_data.o
+endif
+lib-y += drvPadConf.o
+lib-y += apiBDMA.o
+

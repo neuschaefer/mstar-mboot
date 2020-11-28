@@ -1,0 +1,21 @@
+ifeq ($(CONFIG_MSTAR_KAISER),y)
+  CONFIG_MSTAR_KAISER_ASIC=y
+endif
+
+CFLAGS += -I$(srctree)/inc/kaiser/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/kaiser/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_KAISER_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= boot.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= bootrom.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= bootram.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= arm_compile.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= apiBDMA.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 	  += bootram.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= drv_miu_init.o
+#lib-$(CONFIG_MSTAR_KAISER_ASIC) 		+= setSPI.o
+lib-$(CONFIG_MSTAR_KAISER_ASIC)                 += arm_compile.o
+lib-$(CONFIG_MSTAR_KAISERASIC)     += apiBDMA.o
+##lib-$(CONFIG_MSTAR_KAISER_ASIC)     += drv_L1cache.o

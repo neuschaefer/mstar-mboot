@@ -1,0 +1,28 @@
+LIBRARY tmbslNT220x
+EXPORTS
+    tmbslNT220xInit
+    tmbslNT220xDeInit
+    tmbslNT220xGetSWVersion
+    tmbslNT220xCheckHWVersion
+    tmbslNT220xSetPowerState
+    tmbslNT220xGetPowerState
+    tmbslNT220xSetStandardMode
+    tmbslNT220xGetStandardMode
+    tmbslNT220xSetRf
+    tmbslNT220xGetRf
+    tmbslNT220xReset
+    tmbslNT220xGetIF
+    tmbslNT220xGetCF_Offset
+    tmbslNT220xGetLockStatus
+    tmbslNT220xGetPowerLevel
+    tmbslNT220xSetIRQWait
+    tmbslNT220xGetIRQWait
+    tmbslNT220xGetIRQ
+    tmbslNT220xWaitIRQ
+    tmbslNT220xGetXtalCal_End
+    tmbslNT220xWaitXtalCal_End
+    tmbslNT220xSoftReset
+    tmbslNT220xCheckRFFilterRobustness
+    tmbslNT220xWrite
+    tmbslNT220xRead
+      

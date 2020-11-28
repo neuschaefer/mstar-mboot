@@ -1,0 +1,425 @@
+# ==========================================================================
+# Build system
+# ==========================================================================
+
+BB_VER = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
+export BB_VER
+SKIP_STRIP = n
+
+# -std=gnu99 needed for [U]LLONG_MAX on some systems
+CPPFLAGS += $(call cc-option,-std=gnu99,)
+
+CPPFLAGS += \
+	-Iinclude -Iout \
+	$(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
+	-include include/autoconf.h \
+	-D_GNU_SOURCE -DNDEBUG \
+	$(if $(CONFIG_LFS),-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64) \
+	-D"BB_VER=KBUILD_STR($(BB_VER))" -DBB_BT=AUTOCONF_TIMESTAMP
+
+CFLAGS += $(call cc-option,-Wall,)
+CFLAGS += $(call cc-option,-Wshadow,)
+CFLAGS += $(call cc-option,-Wwrite-strings,)
+CFLAGS += $(call cc-option,-Wundef,)
+CFLAGS += $(call cc-option,-Wstrict-prototypes,)
+CFLAGS += $(call cc-option,-Wunused -Wunused-parameter,)
+CFLAGS += $(call cc-option,-Wunused-function -Wunused-value,)
+CFLAGS += $(call cc-option,-Wmissing-prototypes -Wmissing-declarations,)
+CFLAGS += $(call cc-option,-Wno-int-to-pointer-cast -Wno-unused-but-set-variable,)
+# warn about C99 declaration after statement
+CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+# If you want to add more -Wsomething above, make sure that it is
+# still possible to build bbox without warnings.
+
+ifeq ($(CONFIG_WERROR),y)
+CFLAGS += $(call cc-option,-Werror,)
+endif
+# gcc 3.x emits bogus "old style proto" warning on find.c:alloc_action()
+CFLAGS += $(call cc-ifversion, -ge, 0400, -Wold-style-definition)
+
+CFLAGS += $(call cc-option,-fno-builtin-strlen -finline-limit=0 -fomit-frame-pointer -ffunction-sections -fdata-sections,)
+# -fno-guess-branch-probability: prohibit pseudo-random guessing
+# of branch probabilities (hopefully makes bloatcheck more stable):
+CFLAGS += $(call cc-option,-fno-guess-branch-probability,)
+CFLAGS += $(call cc-option,-funsigned-char -static-libgcc,)
+CFLAGS += $(call cc-option,-falign-functions=1 -falign-jumps=1 -falign-labels=1 -falign-loops=1,)
+
+# FIXME: These warnings are at least partially to be concerned about and should
+# be fixed..
+#CFLAGS += $(call cc-option,-Wconversion,)
+
+CFLAGS += $(call cc-option,-mno-abicalls,)
+CFLAGS += $(call cc-option,-fno-pic,)
+
+ifneq ($(CONFIG_DEBUG),y)
+CFLAGS += $(call cc-option,-Os,)
+else
+CFLAGS += $(call cc-option,-g,)
+#CFLAGS += "-D_FORTIFY_SOURCE=2"
+ifeq ($(CONFIG_DEBUG_PESSIMIZE),y)
+CFLAGS += $(call cc-option,-O0,)
+else
+CFLAGS += $(call cc-option,-Os,)
+endif
+endif
+CFLAGS += $(call cc-option,-G 0,)
+ifeq ($(CONFIG_MCU_MIPS32),y)
+CFLAGS += $(call cc-option,-mips32r2,-mips32)
+endif
+
+# If arch/$(ARCH)/Makefile did not override it (with, say, -fPIC)...
+ARCH_FPIC ?= -fpic
+ARCH_FPIE ?= -fpie
+ARCH_PIE ?= -pie
+
+ifeq ($(CONFIG_STATIC),y)
+CFLAGS_sboot += -static
+endif
+
+ifeq ($(CONFIG_PIE),y)
+CFLAGS_sboot += $(ARCH_PIE)
+CFLAGS += $(ARCH_FPIE)
+endif
+
+ifneq ($(CONFIG_EXTRA_CFLAGS),)
+CFLAGS += $(strip $(subst ",,$(CONFIG_EXTRA_CFLAGS)))
+#"))
+endif
+
+LDLIBS +=
+
+ifeq ($(CONFIG_PAM),y)
+LDLIBS += pam pam_misc
+endif
+
+ifeq ($(CONFIG_SELINUX),y)
+LDLIBS += selinux sepol
+endif
+
+ifeq ($(CONFIG_EFENCE),y)
+LDLIBS += efence
+endif
+
+ifeq ($(CONFIG_DMALLOC),y)
+LDLIBS += dmalloc
+endif
+
+# If a flat binary should be built, CFLAGS_sboot="-elf2flt"
+# env var should be set for make invocation.
+# Here we check whether CFLAGS_sboot indeed contains that flag.
+# (For historical reasons, we also check LDFLAGS, which doesn't
+# seem to be entirely correct variable to put "-elf2flt" into).
+W_ELF2FLT = -elf2flt
+ifneq (,$(findstring $(W_ELF2FLT),$(LDFLAGS) $(CFLAGS_sboot)))
+SKIP_STRIP = y
+endif
+
+# Busybox is a stack-fatty so make sure we increase default size
+# TODO: use "make stksizes" to find & fix big stack users
+# (we stole scripts/checkstack.pl from the kernel... thanks guys!)
+# Reduced from 20k to 16k in 1.9.0.
+FLTFLAGS += -s 16000
+
+
+AFLAGS = $(CFLAGS)
+
+# SBoot could not be linked with std libraries
+LDFLAGS += -nostdlib
+
+ifeq ($(CONFIG_MSTAR_TITANIA2),y)
+CHIP_FOLDER:=titania2
+endif
+
+ifeq ($(CONFIG_MSTAR_EUCLID),y)
+CHIP_FOLDER:=euclid
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA3),y)
+CHIP_FOLDER:=titania3
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA4),y)
+CHIP_FOLDER:=titania4
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA7),y)
+CHIP_FOLDER:=titania7
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA8),y)
+CHIP_FOLDER:=titania8
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA12),y)
+CHIP_FOLDER:=titania12
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER2),y)
+CHIP_FOLDER:=amber2
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER5),y)
+CHIP_FOLDER:=amber5
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST129C_D01A_S),y)
+BOARD_NAME:=129C
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST129E_D01A_S),y)
+BOARD_NAME:=129E
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER3),y)
+CHIP_FOLDER:=amber3
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST129F_D01A1_S),y)
+BOARD_NAME:=129F
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST142A_D01A_S_A3),y)
+BOARD_NAME:=142A
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST145B_D01A_S),y)
+BOARD_NAME:=145B
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST029B_10AFVA_A3),y)
+BOARD_NAME:=029B_10AFVA
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MS801_MAA2XG_A3),y)
+BOARD_NAME:=801_MAA2XG
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST029B_CUS36_A3),y)
+BOARD_NAME:=029B_CUS36
+endif
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST032B_10AFX_A3),y)
+BOARD_NAME:=032B
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MSTCUS23_6A801_A3),y)
+BOARD_NAME:=CUS23_6A801
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_CUS28_6A800),y)
+BOARD_NAME:=CUS28_6A800
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_CUS28_6A801),y)
+BOARD_NAME:=CUS28_6A801
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST029B_BOX_A3),y)
+BOARD_NAME:=029B_BOX
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_MST029B_CUS18_A3_ATSC),y)
+BOARD_NAME:=029B_CUS18_ATSC
+endif
+
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA9),y)
+CHIP_FOLDER:=titania9
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA13),y)
+CHIP_FOLDER:=titania13
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER1),y)
+CHIP_FOLDER:=amber1
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER6),y)
+CHIP_FOLDER:=amber6
+endif
+
+ifeq ($(CONFIG_MSTAR_AMBER7),y)
+CHIP_FOLDER:=amber7
+endif
+
+ifeq ($(CONFIG_MSTAR_AMETHYST),y)
+CHIP_FOLDER:=amethyst
+endif
+
+ifeq ($(CONFIG_MSTAR_EAGLE),y)
+CHIP_FOLDER:=eagle
+endif
+
+ifeq ($(CONFIG_MSTAR_EIFFEL),y)
+CHIP_FOLDER:=eiffel
+
+ifeq ($(CONFIG_MSTAR_BD_MST169A_D01A_S_EIFFEL),y)
+BOARD_NAME:=169A
+endif
+
+endif
+
+ifeq ($(CONFIG_MSTAR_NIKE),y)
+CHIP_FOLDER:=nike
+endif
+
+ifeq ($(CONFIG_MSTAR_MADISON),y)
+CHIP_FOLDER:=madison
+endif
+
+ifeq ($(CONFIG_MSTAR_MONET),y)
+CHIP_FOLDER:=monet
+endif
+
+ifeq ($(CONFIG_MSTAR_CLIPPERS),y)
+CHIP_FOLDER:=clippers
+endif
+
+ifeq ($(CONFIG_MSTAR_MIAMI),y)
+CHIP_FOLDER:=miami
+endif
+
+ifeq ($(CONFIG_MSTAR_MONACO),y)
+CHIP_FOLDER:=monaco
+endif
+
+ifeq ($(CONFIG_MSTAR_MUJI),y)
+CHIP_FOLDER:=muji
+endif
+
+ifeq ($(CONFIG_MSTAR_CELTICS),y)
+CHIP_FOLDER:=celtics
+endif
+
+ifeq ($(CONFIG_MSTAR_NADAL),y)
+CHIP_FOLDER:=nadal
+endif
+
+ifeq ($(CONFIG_MSTAR_EMERALD),y)
+CHIP_FOLDER:=emerald
+endif
+
+ifeq ($(CONFIG_MSTAR_NUGGET),y)
+CHIP_FOLDER:=nugget
+endif
+
+ifeq ($(CONFIG_MSTAR_NIKON),y)
+CHIP_FOLDER:=nikon
+endif
+
+ifeq ($(CONFIG_MSTAR_MILAN),y)
+CHIP_FOLDER:=milan
+endif
+
+ifeq ($(CONFIG_MSTAR_URANUS4),y)
+CHIP_FOLDER:=uranus4
+endif
+
+ifeq ($(CONFIG_MSTAR_JANUS),y)
+CHIP_FOLDER:=janus
+endif
+
+ifeq ($(CONFIG_MSTAR_JANUS2),y)
+CHIP_FOLDER:=janus2
+CFLAGS += -mmt
+endif
+
+ifeq ($(CONFIG_MSTAR_AGATE),y)
+CHIP_FOLDER:=agate
+
+ifeq ($(CONFIG_MSTAR_BD_MST147A_D01A_S_AGATE),y)
+BOARD_NAME:=147A
+endif
+ifeq ($(CONFIG_MSTAR_BD_MST147B_D01A_S_AGATE),y)
+BOARD_NAME:=147B
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_EINSTEIN),y)
+CHIP_FOLDER:=einstein
+endif
+
+ifeq ($(CONFIG_MSTAR_EINSTEIN3),y)
+CHIP_FOLDER:=einstein3
+endif
+
+ifeq ($(CONFIG_MSTAR_NAPOLI),y)
+CHIP_FOLDER:=napoli
+
+ifeq ($(CONFIG_MSTAR_NAPOLI_BD_MST181C_D01A_S),y)
+BOARD_NAME:=181C
+endif
+
+endif
+
+ifeq ($(CONFIG_MSTAR_MUNICH),y)
+CHIP_FOLDER:=munich
+endif
+
+ifeq ($(CONFIG_MSTAR_MARIA10),y)
+ifeq ($(CONFIG_MSTAR_MARIA10_PM),y)
+CHIP_FOLDER:=maria10/pm
+else
+CHIP_FOLDER:=maria10
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_MACAW12),y)
+ifeq ($(CONFIG_MSTAR_MACAW12_PM),y)
+CHIP_FOLDER:=macaw12/pm
+else
+CHIP_FOLDER:=macaw12
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_EDEN),y)
+ifeq ($(CONFIG_MSTAR_EDEN_PM),y)
+CHIP_FOLDER:=eden/pm
+else
+CHIP_FOLDER:=eden
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_EULER),y)
+ifeq ($(CONFIG_MSTAR_EULER_PM),y)
+CHIP_FOLDER:=euler/pm
+else
+CHIP_FOLDER:=euler
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_NASA),y)
+ifeq ($(CONFIG_MSTAR_NASA_PM),y)
+CHIP_FOLDER:=nasa/pm
+else
+CHIP_FOLDER:=nasa
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_KRONUS),y)
+CHIP_FOLDER:=kronus
+endif
+
+ifeq ($(CONFIG_MSTAR_KENYA),y)
+CHIP_FOLDER:=kenya
+endif
+
+ifeq ($(CONFIG_MSTAR_KAISERIN),y)
+CHIP_FOLDER:=kaiserin
+endif
+
+ifeq ($(CONFIG_MSTAR_KAISER),y)
+CHIP_FOLDER:=kaiser
+endif
+
+ifeq ($(CONFIG_MSTAR_KRITI),y)
+CHIP_FOLDER:=kriti
+endif
+
+ifeq ($(CONFIG_MSTAR_EDISON),y)
+CHIP_FOLDER:=edison
+
+ifeq ($(CONFIG_MSTAR_BD_MST159A_D01A_S),y)
+BOARD_NAME:=159A
+endif
+ifeq ($(CONFIG_MSTAR_BD_MST147A_D01B_S),y)
+BOARD_NAME:=147A
+endif
+endif
+
+ifeq ($(CONFIG_MSTAR_TITANIA_BD_FPGA),y)
+BOARD_NAME:=fpga
+endif

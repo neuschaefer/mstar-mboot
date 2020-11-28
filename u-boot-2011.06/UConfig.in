@@ -1,0 +1,946 @@
+#
+# For a description of the syntax of this configuration file,
+# see scripts/kbuild/config-language.txt.
+#
+
+menu 'Module Options'
+
+config COMPRESS
+    bool "COMPRESS"
+    default y
+    help
+      COMPRESS7 algorithm.
+
+config DONT_OVERWRITE
+    bool "DONT_OVERWRITE"
+    default y
+    help
+      Determining which partition can't be overwrite on software upgrade..
+
+config USB
+    bool "USB"
+    default n
+    help
+      Selecting this item will enable USB cmd.
+
+if (USB)
+config USB_PREINIT
+    bool "USB_PREINIT"
+    default n
+    help
+           For usb detect every system boot,
+           this item can reduce boot time.
+config USB_LAN
+    bool "USB_LAN"
+    default n
+    help
+      Selecting this item will enable USB LAN cmd.
+endif
+
+config FLASH_TYPE
+    bool "Flash Type"
+    default y
+    help
+        Enable to select flash type. Unused flag.
+if(FLASH_TYPE)
+choice
+    prompt "Flash Type"
+    default FLASH_NOT_SET
+
+config NAND_FLASH
+        bool "NAND_FLASH"
+
+    config SPI_NAND_FLASH
+        bool "SPI_NAND_FLASH"
+
+    config FLASH_NOT_SET
+        bool "FLASH_NOT_SET"
+endchoice
+
+if(NAND_FLASH) || (SPI_NAND_FLASH)
+config BFN_WRITE_NAND
+        bool "BFN_WRITE_NAND"
+        default n
+        help
+        Enable NAND CMD to write BFN BIN files, MIU,LDR,UBOOT
+
+config BOOT_FROM_NAND
+    bool "Boot from nand flash"
+    default n
+    depends on (!BFN_WRITE_NAND)
+    help
+            None
+endif
+
+if(NAND_FLASH)
+    config MSTAR_MLC_FTL
+        bool "MStar MLC FTL"
+        default n
+        help
+            selecting this item will enable support MStar MLC FTL.
+endif
+
+config MMC
+    bool "MMC"
+    default n
+    help
+        selecting this item will enable support embeded-MMC device feature.
+if(MMC)
+config BFE_WRITE_MMC
+        bool "BFE_WRITE_MMC"
+        default n
+        help
+        Enable MMC CMD to write BFE BIN files (MIU,LDR,APP)
+endif
+
+if(!MMC)
+config SD
+    bool "SD"
+    default n
+    help
+        selecting this item will enable support SD Card device feature.
+endif
+
+if(!BOOT_FROM_NAND)
+config BOOT_FROM_EMMC
+    bool "Boot from e-MMC"
+    default n
+    depends on (MMC)
+    help
+      Selecting this item, all system will be stored in e-MMC.
+#     Warning! Don't select "Serial Flash" and "NAND Flash" and "e-MMC" at the same time.
+endif
+endif
+
+#if(!BOOT_FROM_NAND)
+config SPI
+    bool "SPI"
+    default n
+    help
+      Selecting this item will enable SPI flash cmd.
+if (SPI)
+config APP_IN_SPI
+    bool "APP_IN_SPI"
+    default n
+    help
+        System only has SPI storage. Kernel and all filesystems are stored
+        in it.
+
+if (MSTAR_KERES) || (MSTAR_KRIS)
+    config BOOT_SPI_ECOS
+        bool "Boot_SPI_eCOS"
+        default n
+        help
+          Selecting this item will enable boot eCOS from SPI.
+endif
+endif
+
+#endif
+
+config ANDROID_BOOT
+    bool "Android System"
+    default n
+    help
+      Selecting this item will enable Android options.
+
+if (NAND_FLASH) || (SPI_NAND_FLASH)
+config UBI
+    bool "UBI"
+    default y
+    help
+            None
+endif
+
+if (MSTAR_KRITI )
+    config MSTAR_TOOL_ROM_PROGRAM_NAND_BIN
+        bool "Build binary to Program NAND for ROM boot by MSTV Tool"
+        default n
+        help
+            Build binary to Program NAND for ROM boot by using MSTV_Tool.
+
+if (MSTAR_TOOL_ROM_PROGRAM_NAND_BIN)
+choice
+    prompt "Select program NAND or enter cmd line"
+    default MSTAR_TOOL_PROGRAM
+    config MSTAR_TOOL_PROGRAM
+        bool "Build binary to program uboot"
+    config MSTAR_TOOL_CMDLINE
+        bool "Build binary to enter cmd line"
+endchoice
+endif
+endif
+if(UBI)
+config UBI_MLC_BACKUP_LSB
+    bool "  UBI MLC Backup LSB"
+    default n
+    help
+        UBI backup lsb mechanism for MLC NAND
+
+config UBI_ENHANCE_INIT
+    bool "  UBI scan speed up"
+    default n
+    help
+        Speed up only one selected mtd parition for ubi_scan
+endif
+
+config FILE_SYSTEM
+    bool "File System"
+    default y
+    help
+        Enable to select file system. Unused flag.
+
+if (FILE_SYSTEM)
+if ((USB) || (MMC))
+config FAT
+    bool "FAT"
+    default n
+    help
+      Selecting this item will enable FAT cmd.
+
+if (FAT)
+config FAT_WRITE
+    bool "FAT_WRITE"
+    default y
+    help
+
+endif
+endif
+
+if (UBI)
+config UBI_FS
+    bool "UBI File System"
+    default y
+    help
+
+endif
+
+config JFFS2
+    bool "JFFS2"
+    default y
+    help
+
+if((USB) || (MMC))
+config CMD_EXT2
+    bool "EXT2"
+    default n
+    help
+      Selecting this item will enable EXT2 cmd.
+config CMD_EXT4
+    bool "EXT4"
+    default n
+    depends on CMD_EXT2
+    help
+      Selecting this item will enable EXT4 cmd.
+config CMD_EXT4_WRITE
+    bool "EXT4 Write Support"
+    default n
+    depends on CMD_EXT4
+    help
+      Selecting this item will enable EXT4 Write cmd.
+endif
+endif
+
+config KEYPAD
+    bool "Keypad"
+    default n
+    help
+      Selecting this item will enable Keypad, Header and ELF cmd.
+
+if (MSTAR_AMBER3) || (MSTAR_EAGLE) || (MSTAR_EDISON) || (MSTAR_EIFFEL) || (MSTAR_NIKE) || \
+   (MSTAR_MADISON)||(MSTAR_CLIPPERS) || (MSTAR_MIAMI) || (MSTAR_NADAL) || (MSTAR_EINSTEIN) || \
+   (MSTAR_EINSTEIN3) || (MSTAR_MONACO) || (MSTAR_MUJI) || (MSTAR_CELTICS)
+if(KEYPAD)
+config KEYPAD_CUST
+    bool "  KEYPAD_CUST"
+    default n
+    help
+      Select Customer info to set Keypad's setting.
+
+config BOOT_KEYPAD
+    bool "  BOOT_KEYPAD"
+    default n
+    help
+      Selecting this item will enable BOOT_KEYPAD cmd,
+      thus you can select boot mode via KEYPAD.
+endif
+
+endif
+
+if (MSTAR_AMBER3) || (MSTAR_EAGLE) || (MSTAR_EDISON) || (MSTAR_EIFFEL) || (MSTAR_NIKE) || \
+   (MSTAR_MADISON) || (MSTAR_MIAMI) || (MSTAR_NADAL) || (MSTAR_EINSTEIN) || (MSTAR_KAISER) || \
+   (MSTAR_EINSTEIN3) || (MSTAR_MONACO) || (MSTAR_MUJI) || (MSTAR_CELTICS)
+config IR
+    bool "IR"
+    default n
+    help
+      Selecting this item will enable IR cmd.
+if(IR)
+config BOOT_IR
+    bool "BOOT_IR"
+    default n
+    help
+      Selecting this item will enable BOOT_IR cmd,
+      thus you can select boot mode via IR.
+endif
+endif
+
+config SECURITY_BOOT
+    bool "Security"
+    default n
+    help
+
+if (SECURITY_BOOT)
+menu 'Security Options'
+
+choice
+    prompt "Storage Device"
+        default SECURITY_STORE_IN_NAND_FLASH
+        config SECURITY_STORE_IN_SPI_FLASH
+            bool "SECURITY_STORE_IN_SPI_FLASH"
+        depends on (SPI)
+        config SECURITY_STORE_IN_NAND_FLASH
+            bool "SECURITY_STORE_IN_NAND_FLASH"
+        depends on (NAND_FLASH)
+        config SECURITY_STORE_IN_EMMC_FLASH
+            bool "SECURITY_STORE_IN_EMMC_FLASH"
+        depends on (MMC)
+endchoice
+
+config SECURE_AESDMA
+    bool "Enhance Secure booting"
+    default n
+    help
+
+config SECURE_PARTIAL_AUTHENTICATION
+    bool "Secure_Partial_authentication"
+
+config SECURE_USB_UPGRADE
+    bool "Secure USB Upgrade"
+        default n
+        help
+
+config SECURE_DEBUG_MESSAGE
+    bool "Secure Debug Message"
+        default n
+        help
+
+config SECURE_SPI_PROTECT
+    bool "Enable SPI Protect"
+    default n
+    help
+
+if (SECURE_SPI_PROTECT)
+menu 'SPI Protect Options'
+
+config BOOTING_ACTIVE_SPI_PROTECT
+    bool "Active SPI Protect in u-boot"
+    default n
+    help
+
+choice
+    depends on SECURE_SPI_PROTECT
+    prompt "SECURE_SPI_PROTECT_TYPE"
+    default SECURE_SPI_PARTIAL_PROTECT
+        config SECURE_SPI_PARTIAL_PROTECT
+            bool "SECURE_SPI_PARTIAL_PROTECT"
+        config SECURE_SPI_FULL_PROTECT
+            bool "SECURE_SPI_FULL_PROTECT"
+    help
+        SECURE_SPI_FULL_PROTECT can't used with ENV_IN_SERIAL
+endchoice
+
+if (SECURE_SPI_PARTIAL_PROTECT)
+menu 'SPI Protect/Non-Protect Area Setting'
+
+config SECURE_SPI_PROTECT_SPACE
+    hex "SPI Protect Space Length, Reserved from start of SPI"
+    default 0xC0000 if (COMPRESSED_UBOOT)
+    default 0x120000
+    help
+      The value must greater than MBoot length
+      Please re-tune the value if make MBoot fail
+
+config SECURE_SPI_NON_PROTECT_SPACE
+    hex "SPI Non-Protect Space Length, Reserved from end of SPI"
+    default 0x0
+        help
+      The value will effect the result of partial protect
+      When partial protect active fail
+      Please re-tune the value or use full protect
+      It will auto reserved 7/3 more bank for MBoot
+
+endmenu
+
+config BACKUP_SENSITIVE_TABLE
+    bool "Backup DDR/Clk table on non-protected area"
+    default n
+    help
+
+if (BACKUP_SENSITIVE_TABLE)
+#menu 'Seeting SPI offset'
+config SPI_OFFSET_OF_BACKUP_TABLE
+    hex "The spi offset of DDR/Clk table"
+    default 0x1B0000
+    help
+        This value will be recored on chunk header.
+        PM code could check this value to know where
+        the backup DDR/clk tables are.
+#endmenu
+endif
+
+endif
+
+endmenu
+endif
+
+endmenu
+endif
+
+config LZO
+    bool "LZO"
+    default n
+    help
+      Selecting this item will enable LZO compress.
+
+if (LZO)
+config UNLZO_DST_ADDR
+    hex "LZO Uncompress Dst Memory Address"
+    default 0x5f000000
+    help
+      The address to store lzo uncompressed data before writing to flash
+endif
+
+config HDMI_TX
+        bool "HDMI_TX"
+        default n
+        help
+      Selecting this item will try to start a HDMI TX device.
+if (HDMI_TX)
+choice
+    prompt "HDMI TX device"
+      config HDMITX_MSTAR
+        bool "HDMITX_MSTAR"
+        help
+          Using for MSTAR HDMI TX device.
+    config HDMITX_NXP_TDA19988
+        bool "HDMITX_NXP_TDA19988"
+        help
+          Using for HDMI TX device NXP_TDA19988.
+endchoice
+endif
+
+config URSA_6M30
+    bool "URSA_6M30"
+    default n
+    help
+      Selecting this item will enable URSA 6M30 cmd.
+
+config PANEL_INIT
+    bool "PANEL_INIT"
+    default n
+    help
+      Selecting this item will enable PANEL_INIT cmd.
+
+if(PANEL_INIT)
+config STATIC_PANEL_PARA
+bool "STATIC_PANEL_PARA"
+default n
+help
+  Select this item will use uboot panel parameter.
+
+config TCON_PANEL
+  bool "TCON_PANEL"
+    default n
+    help
+      Select this item will support tcon panel.
+endif
+
+config DISPLAY_LOGO
+    bool "DISPLAY_LOGO"
+    default n
+    help
+      Selecting this item will enable DISPLAY_LOGO cmd.
+if (DISPLAY_LOGO)
+choice
+    prompt "GOP Destination Type"
+    config GOP_OP_PATH
+        bool "GOP_OP_PATH"
+        help
+          Using for GOP op path and GOP mixer to ve path
+    config GOP_MIXER2OP_PATH
+        bool "GOP_MIXER2OP_PATH"
+        help
+          Using for GOP mixer to op path
+endchoice
+config DISPLAY_LOGO_SPACE
+    hex "DISPLAY_LOGO_SPACE"
+    default 0x40000
+    help
+      The value for booting logo
+endif
+
+config DISPLAY_OSD
+    bool "DISPLAY_OSD"
+    default n
+    help
+      Selecting this item will DISPLAY_OSD cmd.
+if (DISPLAY_OSD || DISPLAY_LOGO)
+choice
+    depends on (DISPLAY_OSD || DISPLAY_LOGO)
+    prompt "BootLogo/BootOSD Output"
+        default BOOTLOGO_OUT_CVBS
+        config BOOTLOGO_OUT_CVBS
+            bool "BOOTLOGO_OUT_CVBS"
+            help
+              Selecting this item will display boot logo/osd by using CVBS output.
+        config BOOTLOGO_OUT_SCART_HD_DAC
+            bool "BOOTOLOG_OUT_SCART_HD_DAC"
+            help
+              Selecting this item will display boot logo/osd by using SCART output
+              and SCART CVBS on HD DAC.
+        config BOOTLOGO_OUT_SCART_SD_DAC
+            bool "BOOTOLOG_OUT_SCART_SD_DAC"
+            help
+              Selecting this item will display boot logo/osd by using SCART output
+              and SCART CVBS on SD DAC.
+endchoice
+endif
+
+config POWER_MUSIC
+    bool "POWER_MUSIC"
+    default n
+    help
+    Selecting this item will POWER_MUSIC .
+if (POWER_MUSIC)
+choice
+    prompt "amplifier type"
+    default SIM_Amplifier
+    config DIGITAL_TI5711
+        bool "TI5711"
+
+    config DIGITAL_TI5707
+        bool "TI5707"
+
+    config DIGITAL_TI5708
+        bool "TI5708"
+
+    config DIGITAL_STA333
+        bool "STA333"
+
+    config SIM_Amplifier
+        bool "sim_amplifier"
+endchoice
+endif
+
+if (DISPLAY_LOGO ||POWER_MUSIC)
+config ACTIVE_STANDBY
+    bool "ACTIVE_STANDBY"
+    default n
+    help
+    Selecting this item will Active Standby mode.
+endif
+
+config FRONT_END
+    bool "FrontEnd"
+    default n
+    help
+      Selecting this item will enable front-end driver.
+if (FRONT_END)
+choice
+    prompt "Tuner"
+        config MSTAR_TUNER_NUTUNE_FT2125
+            bool "NUTUNE_FT2125_TUNER"
+        config MSTAR_TUNER_NUTUNE_FJ2207
+            bool "NUTUNE_FJ2207_TUNER"
+        config MSTAR_TUNER_NXP_TD1611ALF
+            bool "NXP_TD1611ALF_TUNEr"
+        config MSTAR_TUNER_MXL608
+            bool "MXL608_TUNER"
+endchoice
+choice
+    prompt "DEMOD"
+        config MSTAR_MSB123x_DEMOD
+            bool "MSTAR_MSB123x_DEMOD"
+        config MSTAR_MSB122x_DEMOD
+            bool "MSTAR_MSB122x_DEMOD"
+        config MSTAR_MSB124x_DEMOD
+            bool "MSTAR_MSB124x_DEMOD"
+endchoice
+config DEMUX
+    bool "Demux"
+    default y
+    help
+      Selecting this item will enable demux driver.
+endif
+
+config NET
+    bool "NET"
+    default y
+    help
+      Selecting this item will enable NET cmd.
+if (NET)
+config NETUPDATE
+    bool "Network Upate"
+    default n
+    help
+        selecting this item will enable network update feature.
+endif
+
+if (NET)
+choice
+    prompt "Use emac or gmac"
+        config USE_EMAC
+		bool "USE_EMAC"
+	config USE_GMAC
+	    bool "USE_GMAC"
+endchoice
+endif
+
+config PHY_SELECTION
+    bool "PHY Selection"
+    default y
+    help
+        Enable to select PHY. Unused flag.
+if (PHY_SELECTION)
+config ALBANY
+    bool "MSTAR PHY"
+    default n
+    depends on MSTAR_JANUS
+    help
+        Selecting this item will enable Mstar PHY (Albany)
+
+config ETHERNET_ALBANY
+    bool "MStar Internal Ethernet PHY"
+    default n
+    depends on (MSTAR_JANUS2 || MSTAR_AMBER1 || MSTAR_AMBER2 || MSTAR_AMBER3 || MSTAR_AMBER5 || \
+                MSTAR_AMBER7 || MSTAR_AMETHYST || MSTAR_KAISERIN || MSTAR_EAGLE || MSTAR_EMERALD || \
+                MSTAR_EDISON || MSTAR_EIFFEL || MSTAR_EINSTEIN || MSTAR_NIKE || (MSTAR_MADISON) || \
+                (MSTAR_MIAMI) || (MSTAR_NADAL) || MSTAR_NUGGET || \
+                MSTAR_NIKON || MSTAR_EINSTEIN3 || MSTAR_MONACO || MSTAR_MUJI || MSTAR_CELTICS || MSTAR_MILAN)
+    help
+        Enable MStar Internal Ethernet PHY (Albany)
+endif
+
+config OAD
+    bool "OAD"
+    default n
+    help
+        selecting this item will enable OAD (Over the Air Download) feature.
+
+if (OAD)
+choice
+    prompt "Selection"
+    default SUPERNOVA_OAD
+
+    config OBAMA_OAD
+        depends on OAD
+               bool "Obama_OAD"
+               help
+                 Selecting this item will enable OAD base on Obama.
+
+    config SUPERNOVA_OAD
+        depends on OAD
+               bool "Supernova_OAD"
+               help
+                 Selecting this item will enable OAD base on Supernova.
+
+endchoice
+    config OAD_IN_MBOOT
+        depends on (OAD && SUPERNOVA_OAD)
+               bool "OAD_In_MBoot"
+               default n
+               help
+                 Selecting this item will enable OAD base on Supernova
+                 and download in MBoot.
+   endif
+
+if(OAD_IN_MBOOT)
+config SDTT_OAD
+    bool "SDTT_OAD"
+    default n
+    help
+       selecting this item will enable SDTT OAD feature.
+endif
+
+config MTD_NAND_BBT
+    bool "MTD NAND FLASH BASE BBT"
+    default y
+    help
+        Selecting this item, bbt will be stored in nand flash.
+config MSTARI2C
+    bool "MSTARI2C"
+    default n
+    help
+      Selecting this item will enable MSTARI2C driver.
+
+config EEPROM
+    bool "EEPROM"
+    default n
+    help
+      Selecting this item will enable EEPROM cmd.
+
+config STANDBY
+    bool "STANDBY"
+    default n
+    help
+      Selecting this item will enter standby mode.
+
+config MICOM
+    bool "Micom"
+    default n
+    help
+      Selecting this item will enable Micom cmd.
+
+config WDT
+    bool "Watchdog timer"
+    default n
+    help
+        selecting this item will enable watchdog timer.
+
+config BACKUP_PARTITION
+    bool "backup partition"
+    default n
+    help
+      Selecting this item will enable backup partition.
+
+config LED_FLICKER_WHEN_SW_UPDATE
+    bool "LED_FLICKER_WHEN_SW_UPDATE"
+    default n
+    help
+        selecting this item will enable led flicker during upgrade.
+
+if (ENV_IN_SERIAL)
+config LOAD_ENV_FROM_SN
+    bool "Load env from sn"
+endif
+
+config MSTAR_STR_ENABLE
+  bool "Enable MStar STR"
+  default false
+  help
+    Enable MStar STR
+
+if MSTAR_STR_ENABLE
+config MSTAR_STR_CRC
+  bool "Enable MStar STR CRC Check"
+  default false
+  help
+    Enable MStar STR CRC check
+endif
+
+config MSTAR_FASTBOOT_ENABLE
+  bool "Enable MStar FASTBOOT"
+  default false
+  help
+    Enable MStar FASTBOOT
+
+config MSTAR_FASTBOOT_BUFADR
+  hex "FASTBOOT used buf virt address"
+  depends on MSTAR_FASTBOOT_ENABLE
+  default 0x0
+  help
+    FASTBOOT used buf virt address, shouldn't collide with lx memory
+
+config MSTAR_FASTBOOT_BUFLEN
+  int "FASTBOOT used buf len(MB)"
+  depends on MSTAR_FASTBOOT_ENABLE
+  default 0
+  help
+    FASTBOOT used buf len
+
+config MSTAR_PM_SWIR
+  bool "Enable PM SWIR"
+  default false
+  help
+    Enable MStar PM SWIR
+
+config MSTAR_EDINBURGH
+  bool "Enable Edinburgh"
+  default false
+  help
+    Enable MStar Demodulator Edinburgh
+
+config R2_BRINGUP
+  bool "Enable R2 Bringup"
+  default false
+  help
+    Enable R2 Bringup
+
+if (R2_BRINGUP)
+    menu 'Options'
+        config TEE
+        bool "Enable TEE"
+        default false
+        help
+        Enable TEE
+
+if (TEE)
+choice
+    prompt "Storage"
+    default NCONFIG_STORE_IN_NAND_FLASH
+    config NCONFIG_STORE_IN_SPI_FLASH
+        bool "SECURITY_STORE_IN_SPI"
+        depends on (SPI)
+    config NCONFIG_STORE_IN_NAND_FLASH
+        bool "NCONFIG_STORE_IN_NAND"
+        depends on (NAND_FLASH) || (SPI_NAND_FLASH)
+    config NCONFIG_STORE_IN_EMMC_FLASH
+        bool "NCONFIG_STORE_IN_EMMC"
+        depends on (MMC)
+endchoice
+endif
+endmenu
+endif
+
+config MSTAR_CLEANBOOT
+  bool "Enable Clean Boot"
+  default false
+  help
+    Enable MStar Clean Boot
+
+if (BOOTING_FROM_OTP_WITH_PM51)
+config PM_DRAM_ADDRESS
+    hex "PM in DRAM Address"
+    default 0x87FF0000
+    help
+
+config CUSTOMER_KEY_BANK_DRAM_ADDRESS
+    hex "Customer key bank in DRAM Address"
+    default 0xA0300000
+    help
+
+config SECURE_INFO_DRAM_ADDRESS
+    hex "SECURE INFO in DRAM Address"
+    default 0xA0400000
+    help
+
+endif
+
+choice
+    prompt "Logo Storage"
+        default LOGO_STORE_NOT_SET
+        config LOGO_STORE_NOT_SET
+            bool "LOGO_STORE_NOT_SET"
+        config LOGO_STORE_IN_MBOOT
+            bool "LOGO_STORE_IN_MBOOT"
+        config LOGO_STORE_IN_SPI_FLASH
+            bool "LOGO_STORE_IN_SPI_FLASH"
+        depends on (SPI)
+        config LOGO_STORE_IN_NAND_FLASH
+            bool "LOGO_STORE_IN_NAND_FLASH"
+        depends on (NAND_FLASH) || (SPI_NAND_FLASH)
+        config LOGO_STORE_IN_EMMC_FLASH
+            bool "LOGO_STORE_IN_EMMC_FLASH"
+        depends on (MMC)
+endchoice
+
+if (BINARY_RELEASE)
+menu "Binary Release Config"
+
+choice
+    prompt "Config Binary Location"
+    default MCONFIG_BINARY_NOT_SET
+
+    config MCONFIG_BINARY_NOT_SET
+        bool "MCONFIG_BINARY_NOT_SET"
+
+    config MCONFIG_BINARY_IN_SPI_FLASH
+        bool "MCONFIG_BINARY_IN_SPI_FLASH"
+        depends on (SPI)
+
+    config MCONFIG_BINARY_IN_NAND_FLASH
+        bool "MCONFIG_BINARY_IN_NAND_FLASH"
+        depends on (NAND_FLASH) || (SPI_NAND_FLASH)
+
+    config MCONFIG_BINARY_IN_EMMC_FLASH
+        bool "MCONFIG_BINARY_IN_EMMC_FLASH"
+        depends on (MMC)
+endchoice
+
+endmenu
+endif
+
+menu "Env config"
+choice
+    prompt "Env location"
+    default ENV_IN_NAND if (NAND_FLASH) || (SPI_NAND_FLASH)
+    default ENV_IN_SERIAL if (SPI)
+    default ENV_IN_MMC if (MMC)
+    if((!BOOT_FROM_NAND)&&(!BOOT_FROM_EMMC))
+    config ENV_IN_SERIAL
+        bool "Serial"
+    endif
+
+    if(!BOOT_FROM_NAND)
+    config ENV_IN_MMC
+        bool "e-MMC"
+    endif
+
+    if (NAND_FLASH) || (SPI_NAND_FLASH)
+        config ENV_IN_NAND
+        bool "Nand Flash"
+    endif
+
+    if((!BOOT_FROM_NAND)&&(!BOOT_FROM_EMMC))
+    config ENV_IN_SERIAL_512K
+        bool "Serial_512K"
+    endif
+    config ENV_IN_ERR
+        bool "Error"
+
+endchoice
+
+config ENV_VAR_SIZE
+    hex "The size of env variable in the storage"
+    default 0x10000
+    help
+      This config is for assign the size to env variable.
+
+config FORCE_TO_ASSIGN_ENV_OFFSET
+    bool "force to assignment env location"
+    default n
+    help
+      This config is for assign the offset to env location.
+
+if(FORCE_TO_ASSIGN_ENV_OFFSET)
+config ENV_VAR_OFFSET
+    hex "The offset of env variable in the storage"
+    default 0xFFFFFFFF
+    help
+      This config is for assign the offset to env variable.
+endif
+
+
+endmenu
+
+if (USB || OAD)
+choice
+    prompt "Info Exchange Config"
+    default INFO_IN_UBI_FILE if ((NAND_FLASH || SPI_NAND_FLASH) && UBI && UBI_FS)
+    default INFO_IN_SERIAL_ENV if (ENV_IN_SERIAL)
+    default INFO_IN_MMC if (ENV_IN_MMC)
+
+if(NAND_FLASH) || (SPI_NAND_FLASH)
+        if (UBI && UBI_FS)
+        config INFO_IN_UBI_FILE
+            bool "Nand UBI File"
+        endif
+    endif
+    if(!BOOT_FROM_NAND)
+    if (ENV_IN_SERIAL)
+    config INFO_IN_SERIAL_ENV
+        bool "Serial ENV"
+    endif
+    if (ENV_IN_MMC)
+    config INFO_IN_MMC_ENV
+        bool "e-MMC ENV"
+    endif
+    endif
+
+    config INFO_IN_ERR
+        bool "Error"
+
+endchoice
+endif
+
+endmenu

@@ -1,0 +1,111 @@
+$arc_cnt = @ARGV;
+if ($arc_cnt<2) {
+    exit -1;
+}
+@sname = (".text",".rodata",".data",".bss");
+@mname = ("text","rodata","data","bss");
+
+sub __gen_fname
+{
+	if(substr($_[0],0,1) eq "."){return $_[0];}
+	else{return ".".$_[0] ;}
+}
+sub gen_fname
+{
+	local $cnt=@_;
+	local @out;
+	local $i;
+	for ($i=0;$i<$cnt;$i++)
+	{
+		$out[$i]=__gen_fname($_[$i]);
+	}
+	return @out;
+}
+$i=0;
+%mfname=();
+foreach (@mname)
+{
+	$mfname{$mname[$i]}=&__gen_fname($sname[$i]);
+	$i++;
+}
+%s1n_f = ();
+sub gen_maps
+{
+	local $line;
+	local $n1;
+	local %out;
+	local $flg=0;
+	local $string1="";
+  local $string2="";
+  exit 1 if(!(-e $_[0]));
+	open(FILEH, $_[0]) || exit 1;
+	while ( defined($line=<FILEH>) && !($line =~ /^Linker script and memory map/)){}
+	while ( defined($line=<FILEH>) && !($line =~ /^\/DISCARD\//))
+	{
+		if($flg==1)
+		{
+			$flg=0;
+			if( !($line =~ /^ *[^ ]+ +[^ ]+ +([^ \r\n]+)/ ) ){$string1="";$string2="";}
+			else{$string2=$1;}
+		}
+		else
+		{
+			if ( $line =~ /^([\._a-zA-Z0-9]+)/ )
+			{
+				$n1=&__gen_fname($1);
+				$s1n_f{$1}=$n1;
+				$out{$n1}="";
+			}
+			elsif ( !($line =~ /^ [^ ]+\(.+\)/) )
+			{
+				if( $line =~ /^ ([\._a-zA-Z0-9]+)/ )
+				{
+					$string1=$1;
+					if( ($line =~ /^ [^ ]+ +[^ ]+ +[^ ]+ +([^ \r\n]+)/)){$string2=$1;}
+					else
+					{
+						if (length($string1)>13){$flg=1;}
+						else{$string1="";$string2="";}
+					}
+				}
+			}
+		}
+		if(($string1 ne "") && ($string2 ne ""))
+		{
+			$string2 =~ s/(.+)\(.+\).*/$1/;
+			$out{$n1}.=$string2."(".$string1.")\n";
+			$string1="";
+			$string2="";
+		}
+	}
+	close(FILEH);
+	return \%out;
+}
+$s1n_out=&gen_maps(shift(@ARGV));
+$element="";
+$var="";
+$buf="";
+while( $element=shift(@ARGV))
+{
+	$buf="";
+	if ( (-e $element) && open(FILER, $element) )
+	{
+		while ($var=<FILER>)
+		{
+			$buf.=$var;
+			foreach my $tmp (@mname)
+			{
+				$mk=__config_.$tmp._mark;
+				if( ($var=~ /$mk/) && $mfname{$tmp} && exists($$s1n_out{$mfname{$tmp}}))
+				{
+					$buf.=$$s1n_out{$mfname{$tmp}};
+					last;
+				}
+			}
+		}
+		close(FILER);
+		if (open(FILEW, ">$element")){print FILEW $buf;close(FILEW);}
+	}
+}
+undef($s1n_out);
+exit 0;

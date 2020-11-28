@@ -1,0 +1,33 @@
+ifeq ($(CONFIG_MSTAR_MACAW12),y)
+ifneq ($(CONFIG_MSTAR_MACAW12_BD_FPGA),y)
+  CONFIG_MSTAR_MACAW12_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/macaw12/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/macaw12/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_MACAW12) 		+= sboot.lds
+
+lib-$(CONFIG_MSTAR_MACAW12) 		+= reset.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= cache.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= context.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= backtrace.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= exception.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= interrupt.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= risc32.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= stack.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= vectors.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= init_macaw12.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= drvGlobal.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= puts.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= printf.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= drvAeonUART.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= vsnprintf.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= snprintf.o
+#lib-$(CONFIG_MSTAR_MACAW12) 		+= sprintf.o
+#lib-$(CONFIG_MSTAR_MACAW12) 		+= device.o
+#lib-$(CONFIG_MSTAR_MACAW12) 		+= putchar.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_MACAW12) 		+= setSPI.o

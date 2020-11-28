@@ -1,0 +1,18 @@
+ifeq ($(CONFIG_MSTAR_AMBER3),y)
+  CONFIG_MSTAR_AMBER3_ASIC=y
+endif
+
+CFLAGS += -I$(srctree)/inc/amber3/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/amber3/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_AMBER3_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 		+= boot.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 		+= bootrom.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 	  += bootram.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 		+= drv_miu_init.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC) 		+= setSPI.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC)     += arm_compile.o
+lib-$(CONFIG_MSTAR_AMBER3_ASIC)     += apiBDMA.o
+##lib-$(CONFIG_MSTAR_AMBER3_ASIC)     += drv_L1cache.o

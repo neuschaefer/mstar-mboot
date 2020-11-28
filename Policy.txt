@@ -1,0 +1,68 @@
+//DAILEO/MBoot Code Line Policy
+
+////////////////////////////////////////////
+// Description
+////////////////////////////////////////////
+MBoot mainline
+
+////////////////////////////////////////////
+// What test mechanism before submit code
+////////////////////////////////////////////
+1. DZ pass
+2. Auto test pass (測試的板子有限 - A3/A5/Edison)
+
+////////////////////////////////////////////
+// Integration test (Module test) duration.
+// 1. 寫出測試的週期, 怎麼測試 (auto test, SQC test, manuel test, etc), 若 test case單純, 也可以將 test case 列在這裡
+// 2. test case 中請區分 performance index test. (若發生 performance issue, 可以馬上被測出來), 及其他的 functionality test.
+////////////////////////////////////////////
+A. Burn code and boot up
+    1. Burn Mboot
+    2. Burn AP
+B. Boot Logo/Music
+    1.開機顯示LOGO並撥放音樂
+C. AC Power on/off Test
+    1.input source: ATV且無訊號 (以下動作執行5次)
+    2. AC 關機後再開機, 應正常開機
+D. DC Power on/off Test
+    1. input source: ATV且無訊號 (以下動作執行5次)
+    2. 用遙控器關機, 約20 秒後TV應正常關機
+    3. 用遙控器開機, TV應正常開機
+E. Memcpy performance test
+
+////////////////////////////////////////////
+// What kind of test before release
+////////////////////////////////////////////
+A. Burn code and boot up
+    1. Burn Mboot
+    2. Burn AP
+B. Boot Logo/Music
+    1.開機顯示LOGO並撥放音樂
+C. AC Power on/off Test
+    1.input source: ATV且無訊號 (以下動作執行5次)
+    2. AC 關機後再開機, 應正常開機
+D. DC Power on/off Test
+    1. input source: ATV且無訊號 (以下動作執行5次)
+    2. 用遙控器關機, 約20 秒後TV應正常關機
+    3. 用遙控器開機, TV應正常開機
+E. Memcpy performance test
+
+
+////////////////////////////////////////////
+// Activity on this code line
+////////////////////////////////////////////
+For bug fixing, new feature implementation and new chip configuration is allowed. This code line can be branched based on reasonable case.
+
+////////////////////////////////////////////
+// How to get binary or source code (這裡說的是非 Module maintainer)
+// (1. 若是抓 binary的話, 到那裡抓.)
+// (2. 若是抓 code 的話, 要抓那一版, 去那裡才可以取得 ChangeList. 若是抓 Label 的話,請告知 Label 名稱.)
+////////////////////////////////////////////
+請1,2點都回答, 若你的 module 決不可能提供 source code, 就不需回答第二點,
+關於第二點, 請清楚說明其他人取得版本的方式.
+
+直接搜尋mboot label MBOT-02.xx.xxxxx
+
+////////////////////////////////////////////
+Road Map
+////////////////////////////////////////////

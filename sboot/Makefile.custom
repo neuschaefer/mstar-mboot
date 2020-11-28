@@ -1,0 +1,122 @@
+# ==========================================================================
+# Build system
+# ==========================================================================
+
+sboot.links: 
+	$(Q)-$(SHELL) $^ >$@
+
+.PHONY: install
+ifeq ($(CONFIG_INSTALL_APPLET_SYMLINKS),y)
+INSTALL_OPTS:= --symlinks
+endif
+ifeq ($(CONFIG_INSTALL_APPLET_HARDLINKS),y)
+INSTALL_OPTS:= --hardlinks
+endif
+ifeq ($(CONFIG_INSTALL_APPLET_SCRIPT_WRAPPERS),y)
+ifeq ($(CONFIG_INSTALL_SH_APPLET_SYMLINK),y)
+INSTALL_OPTS:= --sw-sh-sym
+endif
+ifeq ($(CONFIG_INSTALL_SH_APPLET_HARDLINK),y)
+INSTALL_OPTS:= --sw-sh-hard
+endif
+ifeq ($(CONFIG_INSTALL_SH_APPLET_SCRIPT_WRAPPER),y)
+INSTALL_OPTS:= --scriptwrapper
+endif
+endif
+
+install: sboot sboot.links
+	$(Q)echo "install: not implemented"
+
+uninstall: .links
+	$(Q)echo "uninstall: not implemented"
+
+# Not very elegant: copies testsuite to objdir...
+# (cp -pPR is POSIX-compliant (cp -dpR or cp -a would not be))
+.PHONY: check
+.PHONY: test
+check test: sboot sboot.links
+	test -d $(objtree)/testsuite || cp -pPR $(srctree)/testsuite $(objtree)
+	bindir=$(objtree) srcdir=$(srctree)/testsuite \
+	$(SHELL) -c "cd $(objtree)/testsuite && $(srctree)/testsuite/runtest $(if $(KBUILD_VERBOSE:0=),-v)"
+
+.PHONY: release
+release: distclean
+	cd ..; \
+	rm -r -f sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION); \
+	cp -pPR sboot sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION) && { \
+	find sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)/ -type d \
+		-name .svn \
+		-print \
+		-exec rm -r -f {} \; ; \
+	find sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)/ -type f \
+		-name .\#* \
+		-print \
+		-exec rm -f {} \; ; \
+	tar -czf sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION).tar.gz \
+		sboot-$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)/ ; }
+
+.PHONY: checkhelp
+checkhelp:
+	$(Q)$(srctree)/scripts/checkhelp.awk \
+		$(patsubst %,$(srctree)/%,$(wildcard $(patsubst %,%/Config.in,$(sboot-dirs) ./)))
+
+.PHONY: sizes
+sizes: sboot_unstripped
+	$(NM) --size-sort $(<)
+
+.PHONY: bloatcheck
+bloatcheck: sboot_old sboot_unstripped
+	@$(srctree)/scripts/bloat-o-meter sboot_old sboot_unstripped
+	@$(CROSS_COMPILE)size sboot_old sboot_unstripped
+
+.PHONY: baseline
+baseline: sboot_unstripped
+	@mv sboot_unstripped sboot_old
+
+.PHONY: objsizes
+objsizes: sboot_unstripped
+	$(srctree)/scripts/objsizes
+
+.PHONY: stksizes
+stksizes: sboot_unstripped
+	$(CROSS_COMPILE)objdump -d sboot_unstripped | $(srctree)/scripts/checkstack.pl $(ARCH) | uniq
+
+.PHONY: bigdata
+bigdata: sboot_unstripped
+	$(CROSS_COMPILE)nm --size-sort sboot_unstripped | grep -vi ' [trw] '
+
+# Documentation Targets
+.PHONY: doc
+doc: 
+
+# FIXME: Doesn't belong here
+       cmd_doc =
+ quiet_cmd_doc = $(Q)echo "  DOC     $(@F)"
+silent_cmd_doc =
+disp_doc       = $($(quiet)cmd_doc)
+
+# documentation, cross-reference
+# Modern distributions already ship synopsis packages (e.g. debian)
+# If you have an old distribution go to http://synopsis.fresco.org/
+syn_tgt = $(wildcard $(patsubst %,%/*.c,$(sboot-alldirs)))
+syn     = $(patsubst %.c, %.syn, $(syn_tgt))
+
+comma:= ,
+brace_open:= (
+brace_close:= )
+
+SYN_CPPFLAGS := $(strip $(CPPFLAGS) $(EXTRA_CPPFLAGS))
+SYN_CPPFLAGS := $(subst $(brace_open),\$(brace_open),$(SYN_CPPFLAGS))
+SYN_CPPFLAGS := $(subst $(brace_close),\$(brace_close),$(SYN_CPPFLAGS))
+#SYN_CPPFLAGS := $(subst ",\",$(SYN_CPPFLAGS))
+#")
+#SYN_CPPFLAGS := [$(patsubst %,'%'$(comma),$(SYN_CPPFLAGS))'']
+
+%.syn: %.c
+	synopsis -p C -l Comments.SSDFilter,Comments.Previous -Wp,preprocess=True,cppflags="'$(SYN_CPPFLAGS)'" -o $@ $<
+
+.PHONY: html
+html: $(syn)
+	synopsis -f HTML -Wf,title="'sboot Documentation'" -o $@ $^
+
+-include $(srctree)/Makefile.local

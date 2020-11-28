@@ -1,0 +1,26 @@
+CFLAGS += -I$(srctree)/inc/muji/board -I$(srctree)/src -I$(srctree)/src/muji/include
+AFLAGS += -I$(srctree)/inc/muji/board -I$(srctree)/src -I$(srctree)/src/muji/include
+
+extra-y += sboot.lds
+lib-y += boot.o
+lib-y += bootram.o
+lib-y += bootrom.o
+lib-y += bootrom_pll.o
+lib-y += bootrom_clock.o
+
+lib-y += bootrom_miu.o
+lib-y += bootrom_miu_str.o
+lib-y += bootrom_data_miu.o
+lib-y += bootrom_peripheral.o
+
+lib-y += bootrom_cache.o
+lib-y += drvPadConf.o
+
+lib-y += apiBDMA.o
+lib-y += arm_compile.o
+
+lib-$(CONFIG_MIU_DDR4) += bootrom_dqs_ddr4.o
+lib-$(CONFIG_MIU_DDR3) += bootrom_dqs_ddr3.o
+
+lib-y-release += drvPadConf.o
+

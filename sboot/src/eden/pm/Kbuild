@@ -1,0 +1,90 @@
+###################################
+#
+# add included file path below
+#
+###################################
+CFLAGS += -I$(srctree)/src                          \
+          -I$(srctree)/inc/eden/board            \
+          -I$(srctree)/src/eden/pm/api/inc       \
+          -I$(srctree)/src/eden/pm/api/ir       \
+          -I$(srctree)/src/eden/pm/app/inc       \
+          -I$(srctree)/src/eden/pm/core/inc      \
+          -I$(srctree)/src/eden/pm/utopia/inc    \
+
+
+###################
+#
+#  Loader File
+#
+###################
+extra-$(CONFIG_MSTAR_EDEN_PM)  += sboot.lds
+
+
+###################
+#
+#  Prana2 Files
+#
+###################
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/reset.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/cache.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/context.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/backtrace.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/exception.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/interrupt.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/risc32.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/stack.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/vectors.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/puts.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/printf.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/drvAeonUART.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/vsnprintf.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/snprintf.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/__assert.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/timer_cb.o
+#lib-$(CONFIG_MSTAR_EDEN_PM) 	+= core/sprintf.o
+#lib-$(CONFIG_MSTAR_EDEN_PM) 	+= core/device.o
+#lib-$(CONFIG_MSTAR_EDEN_PM) 	+= core/putchar.o
+
+
+#####################
+#
+#  Start Init Files
+#
+#####################
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/init_eden.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/drvGlobal.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/drvPadConf.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/setSPI.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/drvISR.o
+
+#####################
+#
+#  Utility Files
+#
+#####################
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/util/uartdebug.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= core/util/xcSys.o
+
+
+#####################
+#
+#  API Files
+#
+#####################
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= api/msIR.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= api/msKeypad.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= api/msAPI_CEC.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= api/apiXC_Cus.o
+
+#####################
+#
+#  Applications
+#
+#####################
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= app/MApp_IR.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= app/MApp_Main.o
+lib-$(CONFIG_MSTAR_EDEN_PM) 		+= app/MApp_Wakeup.o
+
+
+

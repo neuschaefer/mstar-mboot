@@ -1,0 +1,18 @@
+CFLAGS += -I$(srctree)/inc/nugget/board -I$(srctree)/src -I$(srctree)/src/nugget/include
+AFLAGS += -I$(srctree)/inc/nugget/board -I$(srctree)/src -I$(srctree)/src/nugget/include
+
+extra-y += sboot.lds
+
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_NAND_FLASH),y)
+    lib-y += boot.o bootram.o
+    lib-y += bootram_rom.o bootrom_rom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu0.o bootrom_data.o bootrom_miu1.o cache.o
+else ifeq ($(CONFIG_MSTAR_TOOL_ROM_PROGRAM_NAND_BIN),y)
+    lib-y += boot.o bootram_tool.o
+    lib-y += bootrom_tool.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu0.o bootrom_miu1.o bootrom_data.o
+else
+    lib-y += boot.o bootram.o
+    lib-y += bootrom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu0.o bootrom_miu1.o bootrom_data.o
+endif
+lib-y += drvPadConf.o
+lib-y += apiBDMA.o
+

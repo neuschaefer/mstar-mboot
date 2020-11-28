@@ -1,0 +1,29 @@
+CFLAGS += -I$(srctree)/inc/miami/board 
+CFLAGS += -I$(srctree)/src 
+CFLAGS += -I$(srctree)/src/miami/include
+AFLAGS += -I$(srctree)/inc/miami/board 
+AFLAGS += -I$(srctree)/src 
+AFLAGS += -I$(srctree)/src/miami/include
+
+extra-y += sboot.lds
+lib-y += boot.o
+lib-y += bootram.o
+lib-y += bootrom.o
+lib-y += bootrom_pll.o
+lib-y += bootrom_clock.o
+
+lib-y += bootrom_miu.o
+lib-y += bootrom_miu_str.o
+lib-y += bootrom_data_miu.o
+lib-y += bootrom_peripheral.o
+
+lib-y += bootrom_cache.o
+lib-y += drvPadConf.o
+
+lib-y += apiBDMA.o
+lib-y += arm_compile.o
+
+lib-y-release += drvPadConf.o
+lib-y-release += bootrom_miu.o
+lib-y-release += bootrom_miu_str.o
+lib-y-release += bootrom_data_miu.o

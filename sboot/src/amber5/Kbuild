@@ -1,0 +1,16 @@
+ifeq ($(CONFIG_MSTAR_AMBER5),y)
+  CONFIG_MSTAR_AMBER5_ASIC=y
+endif
+
+CFLAGS += -I$(srctree)/inc/amber5/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/amber5/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_AMBER5_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= boot.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= bootrom.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= bootrom_data.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= bootram.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= setSPI.o
+lib-$(CONFIG_MSTAR_AMBER5_ASIC) 		+= apiBDMA.o

@@ -1,0 +1,39 @@
+ifeq ($(CONFIG_MSTAR_EDISON),y)
+  CONFIG_MSTAR_EDISON_ASIC=y
+endif
+
+CFLAGS += -I$(srctree)/inc/edison/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/edison/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_EDISON_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= boot.o
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_EMMC_FLASH),y)
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= bootrom_rom.o
+else
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= bootrom.o
+endif
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 	  += bootram.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 	  += bootrom_pll.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 	  += bootrom_clock.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 	  += bootrom_peripheral.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 	  += bootrom_miu.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC)       += bootrom_miu_str.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC)       	  += bootrom_cache.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= drv_miu_init.o
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_EMMC_FLASH),y)
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= drv_miu1_init.o
+endif
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= drv_miu_init_str.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC) 		+= setSPI.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC)     += arm_compile.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC)     += apiBDMA.o
+##lib-$(CONFIG_MSTAR_EDISON_ASIC)     += drv_L1cache.o
+
+lib-$(CONFIG_MSTAR_EDISON_ASIC)-release	+= drvPadConf.o
+lib-$(CONFIG_MSTAR_EDISON_ASIC)-release	+= drv_miu_init.o
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_EMMC_FLASH),y)
+lib-$(CONFIG_MSTAR_EDISON_ASIC)-release	+= drv_miu1_init.o
+endif
+lib-$(CONFIG_MSTAR_EDISON_ASIC)-release	+= drv_miu_init_str.o

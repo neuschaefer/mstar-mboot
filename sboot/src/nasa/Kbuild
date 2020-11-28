@@ -1,0 +1,34 @@
+ifeq ($(CONFIG_MSTAR_NASA),y)
+ifneq ($(CONFIG_MSTAR_NASA_BD_FPGA),y)
+  CONFIG_MSTAR_NASA_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/nasa/board -I$(srctree)/src
+CFLAGS += -I$(srctree)/src/include
+AFLAGS += -I$(srctree)/inc/nasa/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_NASA) 		+= sboot.lds
+
+lib-$(CONFIG_MSTAR_NASA) 		+= reset.o
+lib-$(CONFIG_MSTAR_NASA) 		+= cache.o
+lib-$(CONFIG_MSTAR_NASA) 		+= context.o
+lib-$(CONFIG_MSTAR_NASA) 		+= backtrace.o
+lib-$(CONFIG_MSTAR_NASA) 		+= exception.o
+lib-$(CONFIG_MSTAR_NASA) 		+= interrupt.o
+lib-$(CONFIG_MSTAR_NASA) 		+= risc32.o
+lib-$(CONFIG_MSTAR_NASA) 		+= stack.o
+lib-$(CONFIG_MSTAR_NASA) 		+= vectors.o
+lib-$(CONFIG_MSTAR_NASA) 		+= init_nasa.o
+lib-$(CONFIG_MSTAR_NASA) 		+= drvGlobal.o
+lib-$(CONFIG_MSTAR_NASA) 		+= bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_NASA) 		+= puts.o
+lib-$(CONFIG_MSTAR_NASA) 		+= printf.o
+lib-$(CONFIG_MSTAR_NASA) 		+= drvAeonUART.o
+lib-$(CONFIG_MSTAR_NASA) 		+= vsnprintf.o
+lib-$(CONFIG_MSTAR_NASA) 		+= snprintf.o
+#lib-$(CONFIG_MSTAR_NASA) 		+= sprintf.o
+#lib-$(CONFIG_MSTAR_NASA) 		+= device.o
+#lib-$(CONFIG_MSTAR_NASA) 		+= putchar.o
+lib-$(CONFIG_MSTAR_NASA) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_NASA) 		+= setSPI.o

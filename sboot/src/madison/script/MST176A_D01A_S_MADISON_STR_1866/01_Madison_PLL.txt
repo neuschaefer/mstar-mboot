@@ -1,0 +1,133 @@
+swch 4
+
+//=================================================================================================
+                                //adc_atop
+wriu    0x10250E    0x7F        //Soft-reset for DAC/ATOP/PLLB/ADCB/PLLA/ADCA
+wriu    0x10250E    0x00
+
+wriu -w 0x102508    0x0000      //Power-on for related adc_atop IPs
+wriu -w 0x10250A    0x0000
+wriu -w 0x10250C    0x0000
+wriu -w 0x10257E    0x0030
+
+wriu    0x102590    0x08
+wriu    0x102592    0x08
+wriu    0x1025A0    0x00
+wriu    0x1025A4    0x00
+
+//================================================================================================
+                                //Module: chiptop (0x101E)
+wriu -w 0x101E38    0x0000      //Power-on for PD_3P3_1, PD_3P3_0 and PD_3P3_USB1
+
+//================================================================================================
+wriu -w 0x110C02    0x0000      //reg_mpll_pd = 0
+                                //reg_mpll_clk_adc216m_pd = 0
+                                //Module: ana_misc (0x110C)
+                                //reg_mpll_clk_adc432m_pd = 0
+
+wriu -w 0x110D36    0x0000      // reg_DDRPLL_LOOP_DIV_FIRST : [15:14] divideby4
+wriu -w 0x110D34    0x0200      // reg_DDRPLL_LOOP_DIV_SECOND : [15:14] divideby3
+wriu -w 0x110D30    0x147A      // set pll to 300MHz [clk_miu_2x: 300Mhz, clk_miu_1x: 150Mhz]
+wriu -w 0x110D32    0x002E      // set pll to 300MHz [clk_miu_2x: 300Mhz, clk_miu_1x: 150Mhz]
+wriu -w 0x110D2E    0x0800      // PLL PD
+wriu -w 0x110D20    0x0020      // set pll initialvalue
+wriu -w 0x110D22    0x2000      // set pll initialvalue
+wriu -w 0x110D24    0x2000      // set pll initialvalue
+wait  1                         //delay 1ms
+
+wriu -w 0x110D2C    0x0100      // PLL LOCK
+wait  1                         //delay 1ms
+
+wriu -w 0x101202    0x0300      // MCLK PD
+
+//================================================================================================
+
+wriu -w 0x110C22    0x1E80
+wriu    0x110C24    0x00
+wriu    0x110C26    0x0C
+wriu -w 0x110CB0    0x0000
+wriu -w 0x110CD0    0x0001
+
+wriu -w 0x110CC0    0x67c8
+wriu -w 0x110CC2    0x005d
+
+wriu -w 0x110CC4    0x0001
+
+//================================================================================================
+                                //Module: usb0 (0x1007)
+wriu    0x100700    0x0a        //Disable MAC initial suspend, Reset UHC
+wriu    0x100700    0x28        //Release UHC reset, enable UHC and OTG XIU function
+
+//================================================================================================
+                                //Module: utmi (0x103A)
+wriu -w 0x103AA2    0x2088      //PLL_TEST[30:28]: 3'b101 for IBIAS current select
+wriu -w 0x103AA0    0x8051      //PLL_TEST[15]: Bypass 480MHz clock divider
+wriu -w 0x103A82    0x2084      //Enable CLK12_SEL bit <2> for select low voltage crystal clock
+wriu -w 0x103A88    0x0406      //bit<7>: Power down UTMI port-0 bandgap current
+
+wriu -w 0x103A80    0x6bc3      //reg_pdn: bit<15>, bit <2> ref_pdn # Turn on reference voltage and regulator
+wait  1                         //delay 1ms
+
+wriu -w 0x103A80    0x69c3      //Turn on UPLL, reg_pdn: bit<9>
+wait  2                         //delay 2ms
+
+wriu -w 0x103A80    0x0001      //Turn all (including hs_current) use override mode
+
+//================================================================================================
+                                //Module: usb1 (0x1007)
+wriu    0x100780    0x0a        //Disable MAC initial suspend, Reset UHC
+wriu    0x100780    0x28        //Release UHC reset, enable UHC and OTG XIU function
+
+//================================================================================================
+                                //Module: utmi1 (0x103A)
+wriu -w 0x103A22    0x2088      //PLL_TEST[30:28]: 3'b101 for IBIAS current select
+wriu -w 0x103A20    0x8051      //PLL_TEST[15]: Bypass 480MHz clock divider
+wriu -w 0x103A02    0x2084      //Enable CLK12_SEL bit <2> for select low voltage crystal clock
+wriu -w 0x103A08    0x0406      //bit<7>: Power down UTMI port-0 bandgap current
+
+wriu -w 0x103A00    0x6bc3      //reg_pdn: bit<15>, bit <2> ref_pdn  # Turn on reference voltage and regulator
+wait  1                         //delay 1ms
+
+wriu -w 0x103A00    0x69c3      //Turn on UPLL, reg_pdn: bit<9>
+wait  2                         //delay 1ms
+
+wriu -w 0x103A00    0x0001      //Turn all (including hs_current) use override mode
+
+
+//================================================================================================
+                                //Module: usb2 (0x1138)
+wriu    0x113800    0x0a        //Disable MAC initial suspend, Reset UHC
+wriu    0x113800    0x28        //Release UHC reset, enable UHC and OTG XIU function
+
+//================================================================================================
+                                //Module: utmi1 (0x1039)
+wriu -w 0x103922    0x2088      //PLL_TEST[30:28]: 3'b101 for IBIAS current select
+wriu -w 0x103920    0x8051      //PLL_TEST[15]: Bypass 480MHz clock divider
+wriu -w 0x103902    0x2084      //Enable CLK12_SEL bit <2> for select low voltage crystal clock
+wriu -w 0x103908    0x0406      //bit<7>: Power down UTMI port-0 bandgap current
+
+wriu -w 0x103900    0x6bc3      //reg_pdn: bit<15>, bit <2> ref_pdn  # Turn on reference voltage and regulator
+wait  1                         //delay 1ms
+
+wriu -w 0x103900    0x69c3      //Turn on UPLL, reg_pdn: bit<9>
+wait  2                         //delay 2ms
+
+wriu -w 0x103900    0x0001      //Turn all (including hs_current) use override mode
+
+//================================================================================================
+                                //Module: usb3.0
+                                //Module: utmi (0x1223)
+wriu -w 0x122322    0x2088      //PLL_TEST[30:28]: 3'b101 for IBIAS current select
+wriu -w 0x122320    0x8051      //PLL_TEST[15]: Bypass 480MHz clock divid
+wriu -w 0x122302    0x2084      //Enable CLK12_SEL bit <2> for select low voltage crystal clock
+wriu -w 0x122308    0x0406      //bit<7>: Power down UTMI port-0 bandgap current
+
+wriu -w 0x122300    0x6bc3      //reg_pdn: bit<15>, bit <2> ref_pdn  # Turn on reference voltage and regulator
+wait  1                         //delay 1ms
+
+wriu -w 0x122300    0x69c3      //Turn on UPLL, reg_pdn: bit<9>
+wait  2                         //delay 2ms
+
+wriu -w 0x122300    0x0001      //Turn all (including hs_current) use override mode
+
+//=================================================================================================

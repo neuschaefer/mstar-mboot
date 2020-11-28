@@ -1,0 +1,17 @@
+ifeq ($(CONFIG_MSTAR_KAISERIN),y)
+ifneq ($(CONFIG_MSTAR_KAISERIN_BD_FPGA),y)
+  CONFIG_MSTAR_KAISERIN_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/kaiserin/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/kaiserin/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_KAISERIN_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= boot.o
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= bootrom.o
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= bootrom_data.o
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= bootram.o
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_KAISERIN_ASIC) 		+= setSPI.o

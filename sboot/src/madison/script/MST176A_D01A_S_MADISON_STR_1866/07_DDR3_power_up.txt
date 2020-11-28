@@ -1,0 +1,68 @@
+///////////////////////////////////////////////////////////////////////////
+//Start power
+///////////////////////////////////////////////////////////////////////////
+// _HAL_PM_PowerOn
+
+//QQ Start
+//WriteByte(REG_IRQ_IRQ_MASK, ReadByte(REG_IRQ_IRQ_MASK)|(IRQ_PM_SLEEP));
+wriu -b 0x00002B28 0x04 0x04
+//WriteByte(REG_IRQ_FIQ_MASK,(ReadByte(REG_IRQ_FIQ_MASK)|(FIQ_IR|FIQ_IR_RC)));
+wriu -b 0x00002B28 0x18 0x18
+//WriteByte(REG_IRQ_IRQ_MASK,(ReadByte(REG_IRQ_IRQ_MASK)|IRQ_FIQ_OUT_PM));
+wriu -b 0x00002B28 0x02 0x02
+//WriteByte(REG_PM_RIU_DUMMY0_H, ((u8Data & (~u8Mask)) | (u8CtrlData & u8Mask)));
+//no set now
+
+//(VD33_SHUTDN_PWRGD)
+// == (ReadByte(REG_PM_CHIP_TOP_POWERGOOD)&(VD33_SHUTDN_PWRGD))
+wait 10
+//QQ End
+
+//---------------------------------_HAL_PM_PowerOn--------------------------------------------
+wriu -w 0x00000E24 0x0000
+wriu -b 0x00000E20 0x10 0x10
+wriu -w 0x00000E24 0xBABE
+//-----------------------------------------------------------------------
+
+//WriteByte(REG_PM_GPIO_PM_LOCK3, 0x00);
+wriu 0x00000E6E 0x00
+
+//QQ:WriteByte(0x0e00, 0x1F);   //Disable wk mask
+wriu 0x00000E00 0x1F
+//QQ:WriteByte(REG_PMCEC_PD_NORMAL_SEL,ReadByte(REG_PMCEC_PD_NORMAL_SEL)&(~BIT0));
+//wriu -b 0x00001128 0x01 0x00
+//QQ:wait power good
+wait 10
+
+//WriteByte(0x0E38, ReadByte(0x0E38)|BIT2); //Link ISO_EN to PM_GPIO[4]
+wriu -b 0x00000E38 0x04 0x00
+
+
+//Write2Byte(REG_PM_GPIO_PM_LOCK2, 0x0000);
+wriu -w 0x00000E26 0x00000000
+
+//HAL_Write2Byte(REG_PM_RESET_CPU0, 0x0000);
+wriu -w 0x00002E54 0x00000000
+
+//XBYTE[0x2E40] = 0x11; /* ROM+EMMC */
+wriu -b 0x00002E40 0x11 0x11
+//XBYTE[0x2E41] = 0x01; /* flash type: 0x1: NAND_CTRL/ 0x2: PCM_A */
+wriu -b 0x00002E41 0x01 0x01
+
+// Release mcu2_rst (reset MIPS)
+//XBYTE[REG_PM_CPUX_SW_RSTZ] &= ~(BIT6)
+wriu -b 0x00002E52 0x40 0x00
+//XBYTE[REG_PM_CPUX_SW_RSTZ] |= BIT6
+wriu -b 0x00002E52 0x40 0x40
+
+//QQ start
+//-----HAL_PM_ChipConfigCPU
+//WriteByte(REG_PM_CFG_OVERWRITE,0x2F);
+//wriu 0x00000E3E 0x2F
+
+//--------HAL_PM_MaskAll_FIQ_IRQ_INT();
+//WriteByte(0x0E00,0x1F); // Fiq_wk mask
+//WriteByte(0x0E10,0xFF); //Irq_wk mask
+wriu 0x00000E00 0x1F
+wriu 0x00000E10 0xFF
+//-------------------HAL_PM_MaskAll_GPIO_INT();

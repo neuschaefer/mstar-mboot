@@ -1,0 +1,31 @@
+//swch 4
+///////////////////////////////////////////////////////////////////////////
+//Stop power
+///////////////////////////////////////////////////////////////////////////
+
+    
+//Write2Byte(0x101202, Read2Byte(0x101202)|(BIT12|BIT13|BIT14|BIT15));  //set 1'b1
+//Write2Byte(0x100602, Read2Byte(0x100602)|(BIT12|BIT13|BIT14|BIT15));  //set 1'b1
+//WriteByte(0x110d00, ReadByte(0x110d00)|(BIT3));  //set gpio_oenz 1'b1
+//Write2Byte(0x110d00, Read2Byte(0x110d00)|(BIT4|BIT13|BIT14));  //set gpio_mode 1'b1 
+//WriteByte(0x161600, ReadByte(0x161600)|(BIT3));  //set gpio_oenz 1'b1
+//Write2Byte(0x161600, Read2Byte(0x161600)|(BIT4|BIT13|BIT14));  //set gpio_mode 1'b1
+//Write2Byte(0x110d54,0xc070);
+//Write2Byte(0x161654,0xc070);
+//WriteByte(0x110d7e,ReadByte(0x110d7e)|BIT0);
+//WriteByte(0x16167e,ReadByte(0x16167e)|BIT0);
+//Write2Byte(0x110d7e,Read2Byte(0x110d7e)|BIT9);
+//Write2Byte(0x16167e,Read2Byte(0x16167e)|BIT9); 
+
+
+wriu -b 0x101203 0xF0 0xF0
+wriu -b 0x100603 0xF0 0xF0
+
+wriu -b 0x110d00 0x18 0x18
+wriu -b 0x110d80 0x18 0x18
+
+wriu -w 0x110d54 0xc070
+wriu -w 0x110dd4 0xc070
+
+wriu -w 0x110d08 0x001f
+wriu -w 0x110d88 0x001f

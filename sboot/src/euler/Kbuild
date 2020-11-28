@@ -1,0 +1,34 @@
+ifeq ($(CONFIG_MSTAR_EULER),y)
+ifneq ($(CONFIG_MSTAR_EULER_BD_FPGA),y)
+  CONFIG_MSTAR_EULER_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/euler/board -I$(srctree)/src
+CFLAGS += -I$(srctree)/src/include
+AFLAGS += -I$(srctree)/inc/euler/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_EULER) 		+= sboot.lds
+
+lib-$(CONFIG_MSTAR_EULER) 		+= reset.o
+lib-$(CONFIG_MSTAR_EULER) 		+= cache.o
+lib-$(CONFIG_MSTAR_EULER) 		+= context.o
+lib-$(CONFIG_MSTAR_EULER) 		+= backtrace.o
+lib-$(CONFIG_MSTAR_EULER) 		+= exception.o
+lib-$(CONFIG_MSTAR_EULER) 		+= interrupt.o
+lib-$(CONFIG_MSTAR_EULER) 		+= risc32.o
+lib-$(CONFIG_MSTAR_EULER) 		+= stack.o
+lib-$(CONFIG_MSTAR_EULER) 		+= vectors.o
+lib-$(CONFIG_MSTAR_EULER) 		+= init_euler.o
+lib-$(CONFIG_MSTAR_EULER) 		+= drvGlobal.o
+lib-$(CONFIG_MSTAR_EULER) 		+= bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_EULER) 		+= puts.o
+lib-$(CONFIG_MSTAR_EULER) 		+= printf.o
+lib-$(CONFIG_MSTAR_EULER) 		+= drvAeonUART.o
+lib-$(CONFIG_MSTAR_EULER) 		+= vsnprintf.o
+lib-$(CONFIG_MSTAR_EULER) 		+= snprintf.o
+#lib-$(CONFIG_MSTAR_EULER) 		+= sprintf.o
+#lib-$(CONFIG_MSTAR_EULER) 		+= device.o
+#lib-$(CONFIG_MSTAR_EULER) 		+= putchar.o
+lib-$(CONFIG_MSTAR_EULER) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_EULER) 		+= setSPI.o

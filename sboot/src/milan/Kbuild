@@ -1,0 +1,16 @@
+CFLAGS += -I$(srctree)/inc/milan/board -I$(srctree)/src -I$(srctree)/src/milan/include
+AFLAGS += -I$(srctree)/inc/milan/board -I$(srctree)/src -I$(srctree)/src/milan/include
+
+extra-y += sboot.lds
+
+lib-y += boot.o 
+ifeq ($(CONFIG_MSTAR_ROM_BOOT_WITH_NAND_FLASH),y)
+    lib-y += bootram.o bootram_rom.o bootrom_rom.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu.o bootrom_data.o cache.o
+else ifeq ($(CONFIG_MSTAR_TOOL_ROM_PROGRAM_NAND_BIN),y)
+    lib-y += bootrom_tool.o bootram_tool.o  bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu.o bootrom_data.o cache.o
+else
+    lib-y += bootrom.o bootram.o bootrom_pll.o bootrom_clock.o bootrom_cache.o bootrom_miu.o bootrom_data.o
+endif
+lib-y += drvPadConf.o
+lib-y += apiBDMA.o
+

@@ -1,0 +1,17 @@
+ifeq ($(CONFIG_MSTAR_KRONUS),y)
+ifneq ($(CONFIG_MSTAR_KRONUS_BD_FPGA),y)
+  CONFIG_MSTAR_KRONUS_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/kronus/board -I$(srctree)/src
+AFLAGS += -I$(srctree)/inc/kronus/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_KRONUS_ASIC) 	+= sboot.lds
+
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= boot.o
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= bootrom.o
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= bootrom_data.o
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= bootram.o
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_KRONUS_ASIC) 		+= setSPI.o

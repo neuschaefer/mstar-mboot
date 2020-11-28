@@ -1,0 +1,62 @@
+// [DDR3][exit]
+
+//<MIU0>
+wriu -w   0x101206 0x1538 //Bit[11] reg_csz_always_on off
+wriu -w   0x101200 0x002F
+wriu -w   0x101246 0xFFFE
+//<MIU1>
+wriu -w   0x100606 0x1538 //Bit[11] reg_csz_always_on off
+wriu -w   0x100600 0x002F
+wriu -w   0x100646 0xFFFE
+
+//<MIU0>
+wriu -w   0x101200 0x022F
+wriu -w   0x101200 0x032F
+wriu -w   0x101200 0x002F
+wriu -w   0x101200 0x000F
+//<MIU1>
+wriu -w   0x100600 0x022F
+wriu -w   0x100600 0x032F
+wriu -w   0x100600 0x002F
+wriu -w   0x100600 0x000F
+
+//wait 50    // delay 50ms
+wait  5
+
+//<MIU0>
+wriu -w   0x101200 0x001F
+//<MIU1>
+wriu -w   0x100600 0x001F
+
+//wait 50    // delay 50ms
+wait  5
+
+//<MIU0>
+wriu -w   0x101246 0x7ffe
+wriu -w   0x101266 0xffff
+wriu -w   0x101286 0xffff
+wriu -w   0x1012A6 0xffff
+//<MIU1>
+wriu -w   0x100646 0x7ffe
+wriu -w   0x100666 0xffff
+wriu -w   0x100686 0xffff
+wriu -w   0x1006A6 0xffff
+
+//<MIU0>
+//wriu -w   0x101206 0x1538 
+//<MIU1>
+//wriu -w   0x100606 0x1538 
+
+//wait 20    // delay 20ms
+wait  2
+
+
+wriu -w   0x1012E0  0x0000
+wriu -w   0x1012E2  0x0000
+
+//wait 10    // delay 10ms
+wait  1
+
+// [DDR3][exit self refresh]
+
+

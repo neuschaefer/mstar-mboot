@@ -1,0 +1,28 @@
+Change 236821 by THEALE@chunlun.lai_theale_colinux on 2010/03/15 15:50:34
+    98D ok
+Change 238508 by THEALE@jesse.huang_theale on 2010/03/17 14:49:53
+    98D ok
+Change 239550 by THEALE@ken.chang_theale_nb on 2010/03/18 17:47:26
+    98D ok
+Change 241973 by THEALE@timothy.tsai_theale_x61 on 2010/03/23 14:14:40
+    98D ok
+Change 242126 by THEALE@hank.lai_theale_PM on 2010/03/23 16:33:48
+    98D boot ok
+Change 242720 by THEALE@cp.hsu_theale_nb on 2010/03/24 10:41:11
+    98D ok
+Change 243106 by THEALE@hank.lai_theale_PM on 2010/03/24 17:03:31
+    98D ok
+Change 243613 by THEALE@timothy.tsai_theale_x61 on 2010/03/25 09:37:28
+    98D gcc4.3.2(-51)=ok, gcc4.3.3(-154)=fail
+Change 250592 by THEALE@hungda.wang_theale_colinux on 2010/04/07 22:37:40
+    98D boot ok.
+Change 251050 by THEALE@hungda.wang_theale_colinux on 2010/04/08 18:48:54
+    98D boot ok
+Change 251270 by THEALE@morris.cheng_Theale on 2010/04/08 22:53:55
+    98D boot ok
+Change 251283 by THEALE@jovi.huang_theale_BuildSVR on 2010/04/08 23:11:25
+    98D exception
+Change 251416 by THEALE@leo.chen_theale_hpnblinux on 2010/04/09 11:04:59
+    98D exception
+Change 251928 by THEALE@eddy.lin_theale_colinux on 2010/04/09 21:53:59
+    98D exception

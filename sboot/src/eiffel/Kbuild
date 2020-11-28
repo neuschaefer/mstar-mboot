@@ -1,0 +1,22 @@
+CFLAGS += -I$(srctree)/inc/eiffel/board -I$(srctree)/src -I$(srctree)/src/eiffel/include
+AFLAGS += -I$(srctree)/inc/eiffel/board -I$(srctree)/src -I$(srctree)/src/eiffel/include
+
+extra-y += sboot.lds
+lib-y += boot.o
+lib-y += bootram.o
+lib-y += bootrom.o
+lib-y += bootrom_pll.o
+lib-y += bootrom_clock.o
+
+lib-y += bootrom_miu.o
+lib-y += bootrom_miu_str.o
+lib-y += bootrom_data_miu.o
+lib-y += bootrom_data_str.o
+lib-y += bootrom_peripheral.o
+
+lib-y += bootrom_cache.o
+lib-y += drvPadConf.o
+
+lib-y += apiBDMA.o
+lib-y += arm_compile.o
+

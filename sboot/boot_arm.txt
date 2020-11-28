@@ -1,0 +1,5 @@
+# update mboot
+tftp 0x25000000 ./out/mboot.bin
+spi wrc 0x25000000 0 $(filesize)
+reset
+% <- this is end of file symbol

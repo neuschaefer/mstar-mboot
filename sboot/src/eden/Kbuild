@@ -1,0 +1,34 @@
+ifeq ($(CONFIG_MSTAR_EDEN),y)
+ifneq ($(CONFIG_MSTAR_EDEN_BD_FPGA),y)
+  CONFIG_MSTAR_EDEN_ASIC=y
+endif
+endif
+
+CFLAGS += -I$(srctree)/inc/eden/board -I$(srctree)/src
+CFLAGS += -I$(srctree)/src/include
+AFLAGS += -I$(srctree)/inc/eden/board -I$(srctree)/src
+
+extra-$(CONFIG_MSTAR_EDEN) 		+= sboot.lds
+
+lib-$(CONFIG_MSTAR_EDEN) 		+= reset.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= cache.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= context.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= backtrace.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= exception.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= interrupt.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= risc32.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= stack.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= vectors.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= init_eden.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= drvGlobal.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= bootaeonsysinit.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= puts.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= printf.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= drvAeonUART.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= vsnprintf.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= snprintf.o
+#lib-$(CONFIG_MSTAR_EDEN) 		+= sprintf.o
+#lib-$(CONFIG_MSTAR_EDEN) 		+= device.o
+#lib-$(CONFIG_MSTAR_EDEN) 		+= putchar.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= drvPadConf.o
+lib-$(CONFIG_MSTAR_EDEN) 		+= setSPI.o

@@ -1,0 +1,81 @@
+//swch 4
+///////////////////////////////////////////////////////////////////////////
+//Stop power
+///////////////////////////////////////////////////////////////////////////
+//QQ Start
+//Write2Byte(REG_PM_WAKEUP_RST_CHIP_TOP_EN, Read2Byte(REG_PM_WAKEUP_RST_CHIP_TOP_EN)|(BIT13));
+wriu -b 0x00000E13 0x20 0x20
+//Write2Byte(REG_PM_WAKEUP_RST_51_EN, (Read2Byte(REG_PM_WAKEUP_RST_51_EN))&(~(BIT14)));
+wriu -b 0x00000E13 0x40 0x00
+//Write2Byte(REG_PM_RESET_CPU0, 0x829F);
+wriu -w 0x00000E54 0x0000829F
+//Write2Byte(REG_PM_WK_FIQ_CLR, 0xffff);
+wriu -w 0x00000E04 0x0000FFFF
+
+//-----HAL_PM_SAR_SleepPatch
+//WriteByte(REG_PM_WK_FIQ_FORCE, (ReadByte(REG_PM_WK_FIQ_FORCE))&(~BIT0));
+wriu -b 0x00000E02 0x01 0x00
+
+//WriteByte(REG_PM_SW_MCU_CLK, (ReadByte(REG_PM_SW_MCU_CLK))&(~BIT7));
+wriu -b 0x00000E40 0x80 0x00
+//Write2Byte(REG_PM_CKG_SPI, (Read2Byte(REG_PM_CKG_SPI))&(~BIT14));
+wriu -b 0x00000E41 0x40 0x00
+
+//Write2Byte(REG_PM_CKG_MCU,0x0024); // clk_mcu, clk_spi
+wriu -w 0x00000E40 0x00000024
+//Write2Byte(REG_PM_CKG_DDC,0x0000); // clk_ddc, clk_ir, clk_sd
+wriu -w 0x00000E42 0x00000000
+//Write2Byte(REG_PM_CKG_RTC,0x0004); // clk_rtc, clk_sar, clk_pm_sleep
+wriu -w 0x00000E44 0x00000004
+//Write2Byte(REG_PM_CKG_CEC,0x0000); // clk_cec, clk_av_link, clk_kref
+wriu -w 0x00000E46 0x00000000
+//Write2Byte(REG_PM_CKG_DVI_RAW0,0x0000); // clk_dvi_raw0, clk_dvi_raw1, clk_dvi_raw2, clk_dvi_raw3
+wriu -w 0x00000E48 0x00000000
+
+//cus_PM_Init
+//Write2Byte(0x100B22,Read2Byte(0x100B22)|BIT8); // disable CPU clock
+wriu -b 0x00100B23 0x01 0x01
+//MDrv_PM_IntIr(gPmWakeCfg.bPmWakeEnableIR);
+//Write2Byte(REG_PM_WK_FIQ_POL, Read2Byte(REG_PM_WK_FIQ_POL)&(~REG_PM_FIQ_IR));
+wriu -b 0x00000E06 0x01 0x00
+//HAL_PM_ClearWkEventIr();
+//Write2Byte(REG_PM_WK_FIQ_CLR, (Read2Byte(REG_PM_WK_FIQ_CLR))|(REG_PM_FIQ_IR));
+wriu -b 0x00000E04 0x01 0x01
+//Write2Byte(REG_PM_WK_FIQ_MASK, Read2Byte(REG_PM_WK_FIQ_MASK)&(~REG_PM_FIQ_IR));
+wriu -b 0x00000E00 0x01 0x00
+//QQ End
+
+
+//-------------------- Set Standby mode ---------------------------------
+//WriteByte(0x0E38, ReadByte(0x0E38)|BIT2); //Link ISO_EN to PM_GPIO[4]
+//WriteByte(REG_PM_GPIO_PM_LOCK3, 0x00);
+
+wriu -b 0x00000E38 0x04 0x04
+wriu -w 0x00000E6E 0x0000
+
+//--------------------------------------------------------------------------
+
+//-------------------- reg_XTAL_SE_ENB ---------------------------------
+wriu -b 0x00000EE8 0x04 0x04
+//--------------------------------------------------------------------------
+
+//---------------------- _HAL_PM_PowerOff ----------------------
+
+//WriteByte(REG_PM_GPIO_PM_OUT, (ReadByte(REG_PM_GPIO_PM_OUT))&(~u8GpioNum)); //Output low
+//WriteByte(REG_PM_GPIO_PM_OEN, (ReadByte(REG_PM_GPIO_PM_OEN))&(~u8GpioNum));
+//Write2Byte(REG_PM_GPIO_PM_LOCK, 0xBABE);
+
+wriu -w 0x00000E24 0x0000
+wriu -b 0x00000E1E 0x10 0x00
+wriu -b 0x00000E20 0x10 0x00
+wriu -w 0x00000E24 0xBABE
+
+//-------------------------------------------------------------------------------
+
+
+//QQ start
+wait 5
+wriu -b 0x00003D80 0x40 0x00
+wriu -b 0x00002B28 0x04 0x00
+wait 5
+//QQ end

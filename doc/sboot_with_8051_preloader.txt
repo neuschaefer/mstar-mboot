@@ -1,0 +1,73 @@
+sboot with 8051 preloader:
+1. build sboot with 8051 preloader:
+(1)MBoot\sboot\src\titania3\boot.S
+set BOOT_FREE to 1
+(2)make menuconfig
+(3)make
+
+2. If you want to update embedded 8051 preloader
+(1)build MBoot\Boot51ToMips with keil c
+(2)view MBoot\Boot51ToMips\boot51tomips.bin in hexedit (UltraEdit)
+(3)reference (2), and type hex data to MBoot\sboot\src\titania3\boot.S
+ #if ( BOOT_FREE == 1 )
+       .org    0xb00
+
+        .BYTE 0xC2,0xAF           #;clr      EA
+                                  #;
+        .BYTE 0x71,0x1C           #;Call      CheckPowerGood
+                                  #;
+        .BYTE 0x75,0xA0,0x10      #;MOV      P2   , #10H
+        .BYTE 0x90,0x1E,0x03      #;MOV      DPTR , #1E03H
+        .BYTE 0xE0                #;MOVX     A    , @DPTR
+        .BYTE 0x54,0xEF           #;ANL      A    , #11101111B     ;clr bit4,  disable boot from SDRAM
+        .BYTE 0xF0                #;MOVX     @DPTR, A
+
+        .BYTE 0x75,0xA0,0x00      #; MOV      P2   , #00H
+        .BYTE 0x90,0x0E,0x53      #; MOV      DPTR , #0E53H
+        .BYTE 0x74,0xB0           #; MOV      A    , #0B0H
+        .BYTE 0xF0                #; MOVX     @DPTR, A
+                                  #;
+        .BYTE 0x74,0xE0           #; MOV      A   , #0E0H
+        .BYTE 0xF0                #; MOVX     @DPTR, A
+                                  #;
+                                  #;MIAN_LOOP_END:
+        .BYTE 0x80,0xFE           #; jmp     MAIN_LOOP_END
+                                  #;
+                                  #;ckPowerGood:
+        .BYTE 0x75,0xA0,0x00      #;   MOV      P2   , #00H
+        .BYTE 0x90,0x0E,0xC2      #;   MOV      DPTR , #0EC2H
+        .BYTE 0xE0                #;   MOVX     A    , @DPTR
+        .BYTE 0x54,0x07           #;   ANL      A    , #07H
+        .BYTE 0xB4,0x07,0xF4      #;   CJNE     A    , #07H ,CheckPowerGood
+        .BYTE 0x22                #;   ret
+                                  #;   end
+#endif
+
+
+3. boot description, when boot strap is 8051:
+(step 1): boot from 8051:
+when boot, 8051 will got first instruction in SPI, which is a 8051 jump to 0xb00.
+
+    .globl  BOOT_Entry
+BOOT_Entry:
+
+#if ( BOOT_FREE == 1 )
+    .BYTE   0x02,0x0b,0x00,0x00
+#endif
+...
+
+(step 2): what 8051 do:
+a. disable interrupt
+b. pooling power good
+c. when power good, release mips reset.
+
+(step 3): after mips reset been released.
+a. mips will ignor first instuction in SPI, which is a 8051 jump.
+#if ( BOOT_FREE == 1 )
+    .BYTE   0x02,0x0b,0x00,0x00
+#endif
+
+b. mips got second instuction in SPI offset 0x04, which is:
+ROM_start:
+
+c. mips will start sboot+uboot boot up sequence .

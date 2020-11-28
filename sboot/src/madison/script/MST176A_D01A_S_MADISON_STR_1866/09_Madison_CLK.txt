@@ -1,0 +1,129 @@
+swch 4
+
+//=================================================================================================
+//CLKGEN0
+
+wriu -w 0x100B22    0x0000
+wriu -w 0x100B22    0x8000      //Enable MIPS PLL
+
+                                //MCU
+wriu    0x100B21    0x00        //Set CLK_MCU to 216MHz (Enabled)
+wriu    0x100B20    0x01        //Set MCU clock to CLK_MCU
+
+wriu    0x100B94    0x00        //Set CLK_R2_SECURE to 240MHz (Enabled)
+
+wriu    0x100B27    0x0C        //Set CLK_UART0 to 123MHz (Enabled)
+wriu    0x100B28    0x0C        //Set CLK_UART1 to 123MHz (Enabled)
+wriu    0x100B29    0x0C        //Set CLK_UART2 to 123MHz (Enabled)
+
+                                //SPI Flash
+wriu    0x100B2C    0x14        //Set CLK_SPI to 54MHz (Enabled)
+wriu    0x100B2E    0x04        //Set CLK_SPI_M to 48MHz (Enabled)
+wriu    0x100B2E    0x24        //Set CLK_SPI_M to 48MHz
+
+                                //PCMCIA
+wriu    0x100B34    0x00        //Set CLK_PCM to 27MHz (Enabled)
+
+                                //DIG_MUX
+wriu    0x100B35    0x00        //Set CLK_TCK (Enabled)
+
+                                //MIU
+wriu    0x100B3C    0x02        //Set MEMPLL_CLK_BUF to mempll0_clk05x(Enabled)
+wriu    0x100B3D    0x01        //Set CLK_MPLL_SYN to 432MHz (Enabled)
+wriu    0x100B3E    0x00        //Set CLK_MIU to 216MHz (Enabled)
+wriu    0x100B3F    0x00        //Set CLK_MIU_REC to XTAL div 8 (Enabled)
+
+                                //VD
+wriu    0x100B40    0x00        //Set VD clock source to VD_ADC_CLK (Enabled)
+wriu    0x100B41    0x01        //Set CLK_VD (Disabled)
+
+                                //VDMCU
+wriu    0x100B42    0x11        //Set CLK_VDMCU to 108MHz (Disabled)
+
+wriu    0x100B44    0x01        //Set CLK_MCU_MAIL0 to CLK_MCU (Disabled)
+wriu    0x100B45    0x01        //Set CLK_MCU_MAIL1 to CLK_MCU (Disabled)
+wriu    0x100B46    0x01        //Set CLK_VD2X (Disabled)
+wriu    0x100B47    0x01        //Set CLK_VD32FSC to VD_ADC_CLK (Disabled)
+
+                                //VE
+wriu    0x100B48    0x01        //Set CLK_VE to 27MHz (Disabled)
+wriu    0x100B49    0x09        //Set CLK_VEDAC to 108MHz (Disabled)
+wriu    0x100B4A    0x01        //Set CLK_VE_IN to CLK_ADC (Disabled)
+wriu    0x100B4C    0x01        //Set CLK_DACA2 to VIF clock (Disabled)
+wriu    0x100B4D    0x01        //Set CLK_DACB2 to VIF clock (Disabled)
+
+                                //TSP
+wriu    0x100B50    0x01        //Set CLK_TS0 to TS0_CLK (Disabled)
+wriu    0x100B51    0x05        //Set CLK_TS1 to TS1_CLK (Disabled)
+wriu    0x100B53    0xC0        //Set Gating CLK_TSP / CLK_AESDMA
+wriu    0x100B54    0x21        //Set CLK_TSP to 172MHz (Disabled)
+wriu    0x100B55    0x01        //Set CLK_STC0 to STC0 synthesizer output (Disabled)
+wriu    0x100B57    0x01        //Set CLK_STAMP to 27MHz (Disabled)
+
+                                //VP8
+wriu    0x100B5E    0x01        //Set CLK_VP8 to 216MHz (Disabled)
+
+                                //GPD
+wriu    0x100B5F    0x01        //Set CLK_GPD to 216MHz (Disabled)
+
+                                //VD_MHEG5
+wriu    0x100B60    0x01        //Set CLK_VD_MHEG5 to 240MHz (Disabled)
+
+                                //HVD
+wriu    0x100B62    0x0C        //Set CLK_HVD to 345MHz (Disabled)
+wriu    0x100B68    0x01        //Set CLK_HVD_AEC to 288MHz (Disabled)
+
+                                //JPD
+wriu    0x100B6A    0x01        //Set CLK_JPD to 216MHz (Disabled)
+wriu    0x100B6B    0x01        //Set CLK_NJPD to 144MHz (Disabled)
+
+                                //MVD
+wriu    0x100B72    0x01        //Set CLK_MVD to 160MHz (Disabled)
+wriu    0x100B73    0x01        //Set CLK_MVD2 to 172MHz (Disabled)
+wriu    0x100B75    0x01        //Set CLK_MVD_LUMMA_A (Disabled)
+wriu    0x100B76    0x01        //Set CLK_MVD_LUMMA_B (Disabled)
+wriu    0x100B77    0x01        //Set CLK_MVD_LUMMA_C (Disabled)
+wriu    0x100B78    0x01        //Set CLK_MVD_RMEM_C (Disabled)
+wriu    0x100B79    0x01        //Set CLK_MVD_RMEM1_C (Disabled)
+wriu    0x100B7C    0x01        //Set CLK_MVD_RREFDAT (Disabled)
+
+                                //MVOP
+wriu    0x100B98    0x01        //Set CLK_DC0 to synchronous mode (Disabled)
+wriu    0x100B99    0x01        //Set CLK_DC1 to synchronous mode (Disabled)
+wriu    0x100B9A    0x01        //Set CLK_SUB_DC0 to synchronous mode (Disabled)
+wriu    0x100B9B    0x01        //Set CLK_SUB_DC1 to synchronous mode (Disabled)
+
+                                //Smart Card
+wriu    0x100BD8    0x01        //Set CLK_SMART to 172MHz (Disabled)
+wriu    0x100BD9    0x01        //Set CLK_SMART_CA to switcher_no_jitter selection (Disabled)
+
+                                //GOP
+wriu    0x100B80    0x00        //Set CLK_GOPG0 to clk_odclk_p (Enabled)
+wriu    0x100B81    0x00        //Set CLK_GOPG1 to clk_odclk_p (Enabled)
+wriu    0x100B82    0x00        //Set CLK_GOPG2 to clk_odclk_p (Enabled)
+wriu    0x100B83    0x04        //Set CLK_GOPD to CLK_ODCLK (Enabled)
+wriu    0x100B84    0x00        //Set CLK_GOPG3 to clk_odclk_p (Enabled)
+wriu    0x100B86    0x00        //Set CLK_PSRAM0 (Enabled)
+wriu    0x100B87    0x00        //Set CLK_PSRAM1 (Enabled)
+
+                                //GE
+wriu    0x100B90    0x00        //Set CLK_GE to 216MHz (Enabled)
+
+                                //EMAC
+wriu    0x100BC0    0x00        //Set CLK_EMAC_AHB to 123MHz (Enabled)
+wriu    0x100BC1    0x00        //Set CLK_EMAC_RX to CLK_EMAC_RX_in (25MHz) (Enabled)
+wriu    0x100BC2    0x00        //Set CLK_EMAC_TX to CLK_EMAC_TX_IN (25MHz) (Enabled)
+wriu    0x100BC3    0x00        //Set CLK_EMAC_TX_REF to CLK_EMAC_TX_IN (50MHz) (Enabled)
+wriu    0x100BC4    0x00        //Set CLK_EMAC_RX_REF to CLK_EMAC_RX_IN (50MHz) (Enabled)
+
+                                //SDIO
+wriu    0x100BD2    0x01        //Set CLK_SDIO to XTAL (Disabled)
+
+                                //L3
+wriu    0x101882    0x84            //Select MIU2x Clock
+
+//=================================================================================================
+
+
+
+
